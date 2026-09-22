@@ -108,11 +108,20 @@ Local Pages / Tredies Services Marketplace
 - [x] Implement EmailVerificationController (signed URL verify, resend)
 - [x] Implement PasswordResetController (forgotPassword, resetPassword)
 - [x] Configure /api/v1/auth routes with rate limiters (throttle:10,1 / throttle:6,1 / throttle:5,1)
-- [x] Write comprehensive Feature tests in tests/Feature/AuthTest.php (16 tests covering all flows)
-- [x] Verify 100% test pass rate (36 tests, 128 assertions)
+- [x] Add cryptographic signed URL validation, expiration enforcement, and authenticated cross-account verification protection
+- [x] Write comprehensive Feature tests in tests/Feature/AuthTest.php (19 tests covering all authentication & security flows)
+- [x] Verify 100% test pass rate across full test suite (39 tests, 135 assertions)
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document authentication architecture in context/authentication-context.md
-- [x] Commit Phase 4
+- [x] Commit Phase 4 (commit `d85ae79`)
+
+## Phase 5 checklist (NOT STARTED)
+- [ ] Define role capabilities & permissions matrix (Customer, Tradie, Admin)
+- [ ] Implement Laravel authorization Gates & Policies for domain models
+- [ ] Implement Admin-only route protection and middleware
+- [ ] Write feature tests for role-based authorization rules
+- [ ] Run test suite & Pint verification
+- [ ] Update documentation & commit Phase 5
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
