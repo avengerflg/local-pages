@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 3 — Models + Relationships (COMPLETE)**
+**Phase 4 — Authentication & Account Foundation (COMPLETE)**
 
 ## Overall status
 
@@ -13,7 +13,7 @@ Local Pages / Tredies Services Marketplace
 | 1. Laravel project setup | COMPLETE |
 | 2. Database migrations | COMPLETE |
 | 3. Models + relationships | COMPLETE |
-| 4. Authentication | NOT STARTED |
+| 4. Authentication | COMPLETE |
 | 5. Roles + permissions | NOT STARTED |
 | 6. Services + questions | NOT STARTED |
 | 7. Location system | NOT STARTED |
@@ -96,6 +96,23 @@ Local Pages / Tredies Services Marketplace
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document models in context/model-map.md
 - [x] Commit Phase 3
+
+## Phase 4 checklist
+- [x] Install and configure Laravel Sanctum
+- [x] Migrate personal_access_tokens table
+- [x] Update User model with HasApiTokens, MustVerifyEmail, and role helper methods
+- [x] Implement Form Requests with normalization (RegisterCustomerRequest, RegisterTradieRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest)
+- [x] Implement API Resources (UserResource, CustomerProfileResource, TradieProfileResource, AuthResponseResource)
+- [x] Implement EnsureUserHasRole middleware and alias in bootstrap/app.php
+- [x] Implement AuthController (registerCustomer, registerTradie, login, logout, me) with DB transactions
+- [x] Implement EmailVerificationController (signed URL verify, resend)
+- [x] Implement PasswordResetController (forgotPassword, resetPassword)
+- [x] Configure /api/v1/auth routes with rate limiters (throttle:10,1 / throttle:6,1 / throttle:5,1)
+- [x] Write comprehensive Feature tests in tests/Feature/AuthTest.php (16 tests covering all flows)
+- [x] Verify 100% test pass rate (36 tests, 128 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document authentication architecture in context/authentication-context.md
+- [x] Commit Phase 4
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
