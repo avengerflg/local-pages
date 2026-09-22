@@ -4,14 +4,14 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 1 — Laravel Project Setup**
+**Phase 2 — Database Migrations (COMPLETE)**
 
 ## Overall status
 
 | Phase | Status |
 |---|---|
 | 1. Laravel project setup | COMPLETE |
-| 2. Database migrations | NOT STARTED |
+| 2. Database migrations | COMPLETE |
 | 3. Models + relationships | NOT STARTED |
 | 4. Authentication | NOT STARTED |
 | 5. Roles + permissions | NOT STARTED |
@@ -48,6 +48,42 @@ Local Pages / Tredies Services Marketplace
 - [x] Create project documentation
 - [x] Run tests
 - [x] Commit Phase 1
+
+## Phase 2 checklist
+- [x] Adapt users table migration (role, mobile, phone verification, status)
+- [x] Rename framework queue table to queue_jobs to avoid collision with domain jobs table
+- [x] Create customer_profiles migration
+- [x] Create tradie_profiles migration
+- [x] Create tradie_documents migration
+- [x] Create services migration
+- [x] Create service_questions migration
+- [x] Create service_question_options migration
+- [x] Create locations migration (self-referencing hierarchy)
+- [x] Create tradie_services migration
+- [x] Create tradie_service_areas migration
+- [x] Create tradie_availability migration
+- [x] Create service_requests migration
+- [x] Create request_answers migration
+- [x] Create request_attachments migration
+- [x] Create request_tradies migration
+- [x] Create conversations migration
+- [x] Create messages migration
+- [x] Create message_attachments migration
+- [x] Create quotes migration
+- [x] Create quote_attachments migration
+- [x] Create appointments migration
+- [x] Create jobs migration (marketplace domain entity)
+- [x] Create reviews migration with rating 1-5 constraint
+- [x] Create review_responses migration
+- [x] Create review_reports migration
+- [x] Create notifications migration
+- [x] Create audit_logs migration
+- [x] Verify migrate:fresh against local MySQL
+- [x] Verify migrate:status lists all 29 migrations
+- [x] Run tests (php artisan test)
+- [x] Run Pint code style check (./vendor/bin/pint --test)
+- [x] Document schema in context/database-schema.md
+- [x] Commit Phase 2
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
