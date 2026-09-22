@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 2 — Database Migrations (COMPLETE)**
+**Phase 3 — Models + Relationships (COMPLETE)**
 
 ## Overall status
 
@@ -12,7 +12,7 @@ Local Pages / Tredies Services Marketplace
 |---|---|
 | 1. Laravel project setup | COMPLETE |
 | 2. Database migrations | COMPLETE |
-| 3. Models + relationships | NOT STARTED |
+| 3. Models + relationships | COMPLETE |
 | 4. Authentication | NOT STARTED |
 | 5. Roles + permissions | NOT STARTED |
 | 6. Services + questions | NOT STARTED |
@@ -84,6 +84,18 @@ Local Pages / Tredies Services Marketplace
 - [x] Run Pint code style check (./vendor/bin/pint --test)
 - [x] Document schema in context/database-schema.md
 - [x] Commit Phase 2
+
+## Phase 3 checklist
+- [x] Update User model with marketplace relationships and mass assignment protection
+- [x] Create all 26 marketplace domain and pivot Eloquent models
+- [x] Configure explicit foreign keys matching Phase 2 schema
+- [x] Configure attribute casts (integers, booleans, dates, datetimes, decimals, json arrays)
+- [x] Create Model Factories for core testing entities
+- [x] Implement comprehensive model relationship feature tests (17 tests, 36 assertions)
+- [x] Run test suite and verify 100% pass (20 tests, 40 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document models in context/model-map.md
+- [x] Commit Phase 3
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
