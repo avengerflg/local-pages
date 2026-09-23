@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 9 — Quotations / Quote Management (COMPLETE)**
+**Phase 10 — Appointment Scheduling & Job Lifecycle Foundation (COMPLETE)**
 
 ## Overall status
 
@@ -19,8 +19,8 @@ Local Pages / Tredies Services Marketplace
 | 7. Tradie lead dashboard & management | COMPLETE |
 | 8. Customer ↔ tradie platform chat | COMPLETE |
 | 9. Quotations / Quote management | COMPLETE |
-| 10. Appointments | NOT STARTED |
-| 11. Jobs | NOT STARTED |
+| 10. Appointments & Job lifecycle foundation | COMPLETE |
+| 11. Jobs & work completion | NOT STARTED |
 | 12. Reviews | NOT STARTED |
 | 13. Admin panel | NOT STARTED |
 | 14. Notifications | NOT STARTED |
@@ -174,11 +174,27 @@ Local Pages / Tredies Services Marketplace
 - [x] Create API Resources (QuoteResource, QuoteDetailResource, QuoteAttachmentResource)
 - [x] Create QuoteController
 - [x] Register API routes (/api/v1/service-requests/{id}/quotes, /api/v1/quotes/{id}, /api/v1/quotes/{id}/accept, /api/v1/quotes/{id}/reject)
-- [x] Write comprehensive Feature tests in tests/Feature/QuoteManagementTest.php (15 tests covering tradie submission, customer comparison, single view authorization, atomic acceptance, cascading rejection, input validation, and privacy)
-- [x] Verify 100% test pass rate across full test suite (119 tests, 467 assertions)
+- [x] Write comprehensive Feature tests in tests/Feature/QuoteManagementTest.php (18 tests covering tradie submission, customer comparison, single view authorization, atomic acceptance, cascading rejection, input validation, and privacy)
+- [x] Verify 100% test pass rate across full test suite (122 tests, 485 assertions)
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document quote architecture in context/quotes-context.md
 - [x] Commit Phase 9
+
+## Phase 10 checklist
+- [x] Create CreateAppointmentAction (atomic appointment & job creation on quote_accepted request)
+- [x] Create GetAppointmentDetailAction (scoped retrieval of appointment for customer or assigned tradie)
+- [x] Create GetJobDetailAction (scoped retrieval of job for assigned tradie or customer)
+- [x] Create StartJobAction (tradie start job transition from scheduled to in_progress)
+- [x] Create CompleteJobAction (tradie complete job transition from in_progress to completed)
+- [x] Create CreateAppointmentRequest form request with validation
+- [x] Create API Resources (AppointmentResource, JobResource)
+- [x] Create Controllers (AppointmentController, JobController)
+- [x] Register API routes (/api/v1/service-requests/{id}/appointments, /api/v1/appointments/{id}, /api/v1/jobs/{id}, /api/v1/jobs/{id}/start, /api/v1/jobs/{id}/complete)
+- [x] Write comprehensive Feature tests in tests/Feature/AppointmentAndJobLifecycleTest.php (11 tests covering creation, authorization, start, complete, invalid state transitions, and duplicate prevention)
+- [x] Verify 100% test pass rate across full test suite (133 tests, 566 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document appointment and job architecture in context/appointments-context.md and context/jobs-context.md
+- [x] Commit Phase 10
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

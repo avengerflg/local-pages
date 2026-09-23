@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
+use App\Http\Controllers\Api\V1\JobController;
 use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\QuoteController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -51,7 +53,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Customer Service Requests, Matching & Quotes
+// Customer Service Requests, Matching, Quotes & Appointments
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::get('/service-requests', [ServiceRequestController::class, 'index']);
     Route::post('/service-requests', [ServiceRequestController::class, 'store']);
@@ -63,9 +65,11 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::get('/service-requests/{id}/quotes', [QuoteController::class, 'index']);
     Route::post('/quotes/{id}/accept', [QuoteController::class, 'accept']);
     Route::post('/quotes/{id}/reject', [QuoteController::class, 'reject']);
+
+    Route::post('/service-requests/{id}/appointments', [AppointmentController::class, 'store']);
 });
 
-// Tradie Lead Management & Quotations
+// Tradie Lead Management, Quotations & Job Execution
 Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
     Route::prefix('tradie')->group(function () {
         Route::get('/leads', [TradieLeadController::class, 'index']);
@@ -73,9 +77,12 @@ Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
     });
 
     Route::post('/service-requests/{id}/quotes', [QuoteController::class, 'store']);
+
+    Route::post('/jobs/{id}/start', [JobController::class, 'start']);
+    Route::post('/jobs/{id}/complete', [JobController::class, 'complete']);
 });
 
-// Platform Conversations & Shared Quotation Views
+// Platform Conversations, Shared Quotes, Appointments & Jobs
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations', [ConversationController::class, 'index']);
     Route::post('/conversations', [ConversationController::class, 'store']);
@@ -84,4 +91,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations/{id}/messages', [ConversationController::class, 'sendMessage']);
 
     Route::get('/quotes/{id}', [QuoteController::class, 'show']);
+
+    Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
+    Route::get('/jobs/{id}', [JobController::class, 'show']);
 });
