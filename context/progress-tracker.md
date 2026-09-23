@@ -4,7 +4,7 @@
 Local Pages / Tradies Services Marketplace
 
 ## Current phase
-**Phase 12 — Notifications & Communication (COMPLETE)**
+**Phase 13 — Admin Management & Platform Operations (COMPLETE)**
 
 ## Overall status
 
@@ -22,7 +22,7 @@ Local Pages / Tradies Services Marketplace
 | 10. Appointments & Job lifecycle foundation | COMPLETE |
 | 11. Reviews & Ratings | COMPLETE |
 | 12. Notifications & Communication | COMPLETE |
-| 13. Admin panel | NOT STARTED |
+| 13. Admin panel | COMPLETE |
 | 14. Testing & Hardening | NOT STARTED |
 | 15. Security/performance/deployment | NOT STARTED |
 
@@ -224,28 +224,36 @@ Local Pages / Tradies Services Marketplace
 - [x] Create GetNotificationsAction (paginated newest-first listing scoped to authenticated user)
 - [x] Create MarkNotificationReadAction (idempotent mark read with tenant isolation)
 - [x] Create MarkAllNotificationsReadAction (bulk mark all unread notifications read for authenticated user)
-- [x] Integrate notification triggers into existing domain actions:
-  - [x] `SelectMatchingTradiesAction` (`tradie_selected`)
-  - [x] `SendMessageAction` (`new_message`)
-  - [x] `CreateQuoteAction` (`new_quote`)
-  - [x] `AcceptQuoteAction` (`quote_accepted`)
-  - [x] `RejectQuoteAction` (`quote_rejected`)
-  - [x] `CreateAppointmentAction` (`appointment_scheduled`)
-  - [x] `StartJobAction` (`job_started`)
-  - [x] `CompleteJobAction` (`job_completed`)
-  - [x] `CreateReviewAction` (`review_submitted`)
-  - [x] `RespondToReviewAction` (`review_responded`)
+- [x] Integrate notification triggers into existing domain actions (`tradie_selected`, `new_message`, `new_quote`, `quote_accepted`, `quote_rejected`, `appointment_scheduled`, `job_started`, `job_completed`, `review_submitted`, `review_approved`, `review_rejected`, `review_responded`)
 - [x] Create NotificationResource (sanitized user-facing representation with dynamic is_read calculation)
 - [x] Create NotificationController (index, show, unreadCount, markRead, markAllRead)
 - [x] Register Phase 12 API routes (`/api/v1/notifications`, `unread-count`, `read-all`, `{id}`, `{id}/read`)
 - [x] Create NotificationFactory
-- [x] Write NotificationInboxTest.php (8 tests covering auth, tenant isolation, unread counting, pagination, single show, idempotent mark read, bulk mark all read)
-- [x] Write NotificationEventTest.php (10 tests covering all 10 domain trigger events and payload integrity)
-- [x] Verify 100% test pass rate across full suite (180 tests, 711 assertions)
+- [x] Write NotificationInboxTest.php (9 tests covering auth, tenant isolation, unread counting, pagination, single show, idempotent mark read, bulk mark all read, spoofing protection)
+- [x] Write NotificationEventTest.php (14 tests covering all 12 domain trigger events, payload integrity, and rollback atomicity)
+- [x] Verify 100% test pass rate across full suite (185 tests, 721 assertions)
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document notifications architecture in context/notifications-context.md
 - [x] Auto-rejected quotes notification and push/SMS delivery channels documented as OPEN
-- [x] Complete Phase 12
+- [x] Commit Phase 12
+
+## Phase 13 checklist
+- [x] Create LogAuditAction (centralized transactional audit logging)
+- [x] Implement User Management actions & endpoints (GetAdminUsersAction, GetAdminUserDetailAction, UpdateUserStatusAction)
+- [x] Implement self-deactivation guard for administrators (HTTP 422)
+- [x] Implement Tradie & Document Administration actions & endpoints (GetAdminTradiesAction, GetAdminTradieDetailAction, UpdateTradieVerificationAction, GetAdminTradieDocumentsAction, UpdateTradieDocumentStatusAction)
+- [x] Implement Service Catalog & Questionnaire actions & endpoints (GetAdminServicesAction, CreateServiceAction, UpdateServiceAction, UpdateServiceStatusAction, GetAdminServiceQuestionsAction, CreateServiceQuestionAction, UpdateServiceQuestionAction, CreateQuestionOptionAction, UpdateQuestionOptionAction)
+- [x] Implement Location Management with strict geographic hierarchy validation (`state` → `council` → `suburb` → `postcode`)
+- [x] Implement Platform Operations Dashboard (GetAdminDashboardAction with operational counts, no financial data)
+- [x] Connect audit logging to existing Phase 11 review moderation actions (AdminApproveReviewAction, AdminRejectReviewAction)
+- [x] Create Form Requests with strict validation across all mutation endpoints
+- [x] Create sanitized Admin API Resources omitting passwords, tokens, credentials, and private storage paths
+- [x] Register all Phase 13 admin endpoints under `auth:sanctum` and `role:admin`
+- [x] Write comprehensive Feature tests in tests/Feature/AdminManagementTest.php (13 tests, 117 assertions)
+- [x] Verify 100% test pass rate across full test suite (198 tests, 838 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document admin architecture in context/admin-context.md
+- [x] Complete Phase 13
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
@@ -267,3 +275,5 @@ Do not mark a phase COMPLETE unless its acceptance criteria have been verified.
 - Production infrastructure
 - Auto-rejected quotes notification
 - Push and SMS delivery channels
+- Destructive catalog / location cascading deletion
+- Controlled binary document streaming downloads

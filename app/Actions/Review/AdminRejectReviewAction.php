@@ -2,6 +2,7 @@
 
 namespace App\Actions\Review;
 
+use App\Actions\Admin\LogAuditAction;
 use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Review;
 use Illuminate\Validation\ValidationException;
@@ -10,7 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 class AdminRejectReviewAction
 {
     public function __construct(
-        protected CreateNotificationAction $createNotificationAction
+        protected CreateNotificationAction $createNotificationAction,
+        protected LogAuditAction $logAuditAction
     ) {}
 
     /**
@@ -34,10 +36,23 @@ class AdminRejectReviewAction
             ]);
         }
 
+        $oldStatus = $review->moderation_status;
+
         $review->update([
             'moderation_status' => 'rejected',
             'removed_at' => now(),
         ]);
+
+        if (auth()->check()) {
+            $this->logAuditAction->execute(
+                actor: auth()->user(),
+                action: 'review.rejected',
+                entityType: 'reviews',
+                entityId: $review->id,
+                oldValues: ['moderation_status' => $oldStatus],
+                newValues: ['moderation_status' => 'rejected']
+            );
+        }
 
         $review->loadMissing(['customer', 'tradieProfile', 'response']);
 
