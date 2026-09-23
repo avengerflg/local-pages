@@ -8,6 +8,7 @@ use App\Models\MessageAttachment;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class SendMessageAction
@@ -27,46 +28,56 @@ class SendMessageAction
 
         $this->authorizeParticipant($user, $conversation);
 
-        return DB::transaction(function () use ($user, $conversation, $body, $attachments) {
-            $hasAttachments = ! empty($attachments);
-            $hasBody = ! empty($body);
+        $uploadedPaths = [];
 
-            $messageType = 'text';
-            if ($hasAttachments && ! $hasBody) {
-                // If only files, determine message_type
-                $firstFile = $attachments[0];
-                $mime = $firstFile->getClientMimeType() ?: $firstFile->getMimeType() ?: '';
-                $messageType = str_starts_with($mime, 'image/') ? 'image' : 'document';
-            }
+        try {
+            return DB::transaction(function () use ($user, $conversation, $body, $attachments, &$uploadedPaths) {
+                $hasAttachments = ! empty($attachments);
+                $hasBody = ! empty($body);
 
-            $message = Message::create([
-                'conversation_id' => $conversation->id,
-                'sender_id' => $user->id,
-                'body' => $body,
-                'message_type' => $messageType,
-                'sent_at' => now(),
-            ]);
-
-            foreach ($attachments as $file) {
-                if ($file instanceof UploadedFile) {
-                    $storedPath = $file->store('chat-attachments', 'public');
-
-                    MessageAttachment::create([
-                        'message_id' => $message->id,
-                        'file_path' => $storedPath,
-                        'original_name' => $file->getClientOriginalName(),
-                        'mime_type' => $file->getClientMimeType() ?: $file->getMimeType() ?: 'application/octet-stream',
-                        'file_size' => $file->getSize() ?: 0,
-                    ]);
+                $messageType = 'text';
+                if ($hasAttachments && ! $hasBody) {
+                    $firstFile = $attachments[0];
+                    $mime = $firstFile->getClientMimeType() ?: $firstFile->getMimeType() ?: '';
+                    $messageType = str_starts_with($mime, 'image/') ? 'image' : 'document';
                 }
+
+                $message = Message::create([
+                    'conversation_id' => $conversation->id,
+                    'sender_id' => $user->id,
+                    'body' => $body,
+                    'message_type' => $messageType,
+                    'sent_at' => now(),
+                ]);
+
+                foreach ($attachments as $file) {
+                    if ($file instanceof UploadedFile) {
+                        $storedPath = $file->store('chat-attachments', 'local');
+                        $uploadedPaths[] = $storedPath;
+
+                        MessageAttachment::create([
+                            'message_id' => $message->id,
+                            'file_path' => $storedPath,
+                            'original_name' => $file->getClientOriginalName(),
+                            'mime_type' => $file->getClientMimeType() ?: $file->getMimeType() ?: 'application/octet-stream',
+                            'file_size' => $file->getSize() ?: 0,
+                        ]);
+                    }
+                }
+
+                $conversation->update([
+                    'last_message_at' => now(),
+                ]);
+
+                return $message->loadMissing(['sender', 'attachments']);
+            });
+        } catch (\Throwable $e) {
+            foreach ($uploadedPaths as $path) {
+                Storage::disk('local')->delete($path);
             }
 
-            $conversation->update([
-                'last_message_at' => now(),
-            ]);
-
-            return $message->loadMissing(['sender', 'attachments']);
-        });
+            throw $e;
+        }
     }
 
     /**

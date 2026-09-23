@@ -24,10 +24,21 @@ Phase 8 implements the backend and REST API foundation for the **Customer ↔ Tr
    - Validates that at least a `body` (max 5,000 chars) or `attachments` (max 5 files, 10MB each, safe types) is present.
    - Stored in `messages` and `message_attachments` inside an atomic `DB::transaction()`.
 
-4. **Attachment Security**:
-   - Chat attachments are stored on the configured disk under `chat-attachments/`.
+4. **Attachment Security & Private Storage**:
+   - Chat attachments are stored on the private `local` disk under `storage/app/private/chat-attachments/`.
+   - Files are NOT web-accessible and never stored on the public disk.
+   - Any transaction failure during sending automatically cleans up any uploaded private files to prevent orphaned artifacts.
    - Responses expose safe metadata only (`id`, `original_name`, `mime_type`, `file_size`, `created_at`).
-   - Public URLs, temporary/signed URLs, raw storage keys, filesystem paths, and storage credentials are never exposed in the API.
+   - Public URLs, signed download URLs, raw storage keys, filesystem paths, and storage credentials are never exposed in the API.
+
+5. **Pagination & Ordering**:
+   - `GET /api/v1/conversations`: Paginated (default 15 per page) and ordered by `COALESCE(last_message_at, created_at) DESC`.
+   - `GET /api/v1/conversations/{id}/messages`: Paginated (default 25 per page) and ordered chronologically by `id ASC` to ensure unbounded message retrieval is prevented.
+
+6. **Read / Unread Status Behavior**:
+   - `messages` table provides `is_read` (boolean, default `false`) and `read_at` (timestamp, nullable) fields.
+   - `MessageResource` exposes `read_at` as read metadata.
+   - Automated mark-as-read transitions, bulk read receipts, and aggregate unread badge counters are NOT invented in Phase 8 and remain explicitly OPEN for future phases.
 
 ---
 
@@ -46,7 +57,7 @@ Phase 8 implements the backend and REST API foundation for the **Customer ↔ Tr
 ## Open Decisions (Documented)
 1. **Real-time WebSockets / Reverb Broadcasting**: Platform chat operates via reliable REST APIs in Phase 8; real-time event broadcasting is OPEN for frontend integration.
 2. **Secure Attachment Delivery**: Chat attachments currently return safe metadata only; tokenized/signed download URL streams remain OPEN for future storage hardening.
-3. **Read Receipts & Unread Counters**: Schema supports `messages.read_at`; active mark-as-read workflows remain OPEN.
+3. **Read Receipts & Unread Counters**: Schema supports `messages.read_at`; active mark-as-read workflows and unread badge aggregations remain OPEN.
 4. **Message Editing / Deletion**: Out of scope for Phase 8; edit histories and message deletion remain OPEN.
 5. **Chat Notifications**: SMS, push, and transactional email notifications for unread messages remain OPEN.
 6. **Direct Customer Contact Disclosure**: Customer phone numbers and email addresses remain shielded within platform chat.
