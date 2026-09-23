@@ -148,6 +148,40 @@ class QuoteManagementTest extends TestCase
         Storage::disk('public')->assertMissing($attachment->file_path);
     }
 
+    public function test_tradie_can_submit_multiple_quotes_if_schema_permits(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $serviceRequest = ServiceRequest::factory()->create(['customer_id' => $customer->id, 'service_id' => $service->id]);
+
+        $tradieUser = User::factory()->tradie()->create(['status' => 'active']);
+        $tradieProfile = TradieProfile::factory()->create(['user_id' => $tradieUser->id]);
+
+        RequestTradie::create([
+            'request_id' => $serviceRequest->id,
+            'tradie_id' => $tradieProfile->id,
+            'status' => 'selected',
+        ]);
+
+        // Submit first quote
+        $res1 = $this->actingAs($tradieUser, 'sanctum')
+            ->postJson("/api/v1/service-requests/{$serviceRequest->id}/quotes", [
+                'amount' => 400.00,
+                'description' => 'Initial quote offer',
+            ]);
+        $res1->assertCreated();
+
+        // Submit revised / second quote (permitted as schema has no unique constraint)
+        $res2 = $this->actingAs($tradieUser, 'sanctum')
+            ->postJson("/api/v1/service-requests/{$serviceRequest->id}/quotes", [
+                'amount' => 380.00,
+                'description' => 'Revised discounted quote',
+            ]);
+        $res2->assertCreated();
+
+        $this->assertCount(2, Quote::where('request_id', $serviceRequest->id)->where('tradie_id', $tradieProfile->id)->get());
+    }
+
     public function test_unselected_tradie_cannot_submit_quote(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
@@ -289,6 +323,28 @@ class QuoteManagementTest extends TestCase
             ->assertJsonPath('data.1.amount', '300.00');
     }
 
+    public function test_customer_quote_list_is_paginated(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $serviceRequest = ServiceRequest::factory()->create(['customer_id' => $customer->id, 'service_id' => $service->id]);
+
+        $tradie = TradieProfile::factory()->create();
+
+        Quote::create(['request_id' => $serviceRequest->id, 'tradie_id' => $tradie->id, 'amount' => 100, 'description' => 'Q1', 'status' => 'pending']);
+        Quote::create(['request_id' => $serviceRequest->id, 'tradie_id' => $tradie->id, 'amount' => 200, 'description' => 'Q2', 'status' => 'pending']);
+        Quote::create(['request_id' => $serviceRequest->id, 'tradie_id' => $tradie->id, 'amount' => 300, 'description' => 'Q3', 'status' => 'pending']);
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->getJson("/api/v1/service-requests/{$serviceRequest->id}/quotes?per_page=2");
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 3)
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.current_page', 1);
+    }
+
     public function test_other_customer_cannot_list_quotes_for_another_customers_request(): void
     {
         $customerA = User::factory()->create(['role' => 'customer']);
@@ -418,6 +474,52 @@ class QuoteManagementTest extends TestCase
         $this->assertEquals('quote_accepted', $serviceRequest->fresh()->status);
     }
 
+    public function test_concurrent_quote_acceptance_guarantees_exactly_one_accepted_quote(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $serviceRequest = ServiceRequest::factory()->create([
+            'customer_id' => $customer->id,
+            'service_id' => $service->id,
+            'status' => 'quoting',
+        ]);
+
+        $tradie1 = TradieProfile::factory()->create();
+        $tradie2 = TradieProfile::factory()->create();
+
+        $quote1 = Quote::create([
+            'request_id' => $serviceRequest->id,
+            'tradie_id' => $tradie1->id,
+            'amount' => 500.00,
+            'description' => 'Quote 1',
+            'status' => 'pending',
+        ]);
+
+        $quote2 = Quote::create([
+            'request_id' => $serviceRequest->id,
+            'tradie_id' => $tradie2->id,
+            'amount' => 450.00,
+            'description' => 'Quote 2',
+            'status' => 'pending',
+        ]);
+
+        // First acceptance succeeds
+        $res1 = $this->actingAs($customer, 'sanctum')
+            ->postJson("/api/v1/quotes/{$quote1->id}/accept");
+        $res1->assertOk();
+
+        // Second acceptance on competing quote is rejected by validation / lock checks
+        $res2 = $this->actingAs($customer, 'sanctum')
+            ->postJson("/api/v1/quotes/{$quote2->id}/accept");
+        $res2->assertStatus(422)
+            ->assertJsonValidationErrors(['quote']);
+
+        // Verify exactly one accepted quote exists
+        $this->assertEquals(1, Quote::where('request_id', $serviceRequest->id)->where('status', 'accepted')->count());
+        $this->assertEquals(1, Quote::where('request_id', $serviceRequest->id)->where('status', 'rejected')->count());
+        $this->assertEquals('quote_accepted', $serviceRequest->fresh()->status);
+    }
+
     public function test_customer_cannot_accept_another_quote_after_one_is_already_accepted(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
@@ -488,30 +590,51 @@ class QuoteManagementTest extends TestCase
     {
         $customer = User::factory()->create(['role' => 'customer']);
         $service = Service::factory()->create(['status' => 'active']);
-        $serviceRequest = ServiceRequest::factory()->create(['customer_id' => $customer->id, 'service_id' => $service->id]);
+        $serviceRequest = ServiceRequest::factory()->create([
+            'customer_id' => $customer->id,
+            'service_id' => $service->id,
+            'status' => 'quoting',
+        ]);
 
-        $tradieProfile = TradieProfile::factory()->create();
-        $quote = Quote::create([
+        $tradie1 = TradieProfile::factory()->create();
+        $tradie2 = TradieProfile::factory()->create();
+
+        $quote1 = Quote::create([
             'request_id' => $serviceRequest->id,
-            'tradie_id' => $tradieProfile->id,
+            'tradie_id' => $tradie1->id,
             'amount' => 500.00,
             'description' => 'Quote to reject',
             'status' => 'pending',
         ]);
 
+        $quote2 = Quote::create([
+            'request_id' => $serviceRequest->id,
+            'tradie_id' => $tradie2->id,
+            'amount' => 600.00,
+            'description' => 'Quote to keep pending',
+            'status' => 'pending',
+        ]);
+
         $response = $this->actingAs($customer, 'sanctum')
-            ->postJson("/api/v1/quotes/{$quote->id}/reject");
+            ->postJson("/api/v1/quotes/{$quote1->id}/reject");
 
         $response->assertOk()
-            ->assertJsonPath('data.id', $quote->id)
+            ->assertJsonPath('data.id', $quote1->id)
             ->assertJsonPath('data.status', 'rejected');
 
-        $this->assertEquals('rejected', $quote->fresh()->status);
-        $this->assertNotNull($quote->fresh()->rejected_at);
+        $this->assertEquals('rejected', $quote1->fresh()->status);
+        $this->assertNotNull($quote1->fresh()->rejected_at);
+
+        // Other quote remains pending
+        $this->assertEquals('pending', $quote2->fresh()->status);
+        $this->assertNull($quote2->fresh()->rejected_at);
+
+        // Service request remains in quoting (not prematurely quote_accepted)
+        $this->assertEquals('quoting', $serviceRequest->fresh()->status);
 
         // Rejected quote cannot subsequently be accepted
         $acceptRes = $this->actingAs($customer, 'sanctum')
-            ->postJson("/api/v1/quotes/{$quote->id}/accept");
+            ->postJson("/api/v1/quotes/{$quote1->id}/accept");
 
         $acceptRes->assertStatus(422)
             ->assertJsonValidationErrors(['quote']);
