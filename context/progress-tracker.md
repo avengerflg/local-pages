@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 7 — Tradie Lead Dashboard & Lead Management (COMPLETE)**
+**Phase 8 — Customer ↔ Tradie Platform Chat & Conversations (COMPLETE)**
 
 ## Overall status
 
@@ -17,7 +17,8 @@ Local Pages / Tredies Services Marketplace
 | 5. Customer service requests | COMPLETE |
 | 6. Tradie matching & selection | COMPLETE |
 | 7. Tradie lead dashboard & management | COMPLETE |
-| 8. Services + questions admin | NOT STARTED |
+| 8. Customer ↔ tradie platform chat | COMPLETE |
+| 9. Services + questions admin | NOT STARTED |
 | 9. Location system | NOT STARTED |
 | 10. Tradie onboarding | NOT STARTED |
 | 11. Chat | NOT STARTED |
@@ -152,6 +153,21 @@ Local Pages / Tredies Services Marketplace
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document tradie leads architecture in context/tradie-leads-context.md
 - [x] Commit Phase 7
+
+## Phase 8 checklist
+- [x] Create GetConversationsAction (paginated listing of user conversations with recent message previews)
+- [x] Create GetOrCreateConversationAction (authorized, idempotent conversation initiation)
+- [x] Create GetConversationMessagesAction (scoped conversation detail and chronological paginated message history)
+- [x] Create SendMessageAction (transactional message sending with file attachment processing and timestamp tracking)
+- [x] Create Form Requests (CreateConversationRequest, SendMessageRequest)
+- [x] Create API Resources (ConversationResource, ConversationDetailResource, MessageResource, MessageAttachmentResource)
+- [x] Create ConversationController
+- [x] Register API routes (/api/v1/conversations, /api/v1/conversations/{id}, /api/v1/conversations/{id}/messages)
+- [x] Write comprehensive Feature tests in tests/Feature/ChatTest.php (8 tests covering auth, participant authorization, message exchange, attachments metadata, empty validation, security)
+- [x] Verify 100% test pass rate across full test suite (91 tests, 344 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document chat architecture in context/chat-context.md
+- [x] Commit Phase 8
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

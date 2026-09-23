@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
+use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -63,4 +64,13 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:tradie'])->prefix('tradie')->group(function () {
     Route::get('/leads', [TradieLeadController::class, 'index']);
     Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
+});
+
+// Platform Conversations & Chat
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+    Route::get('/conversations/{id}', [ConversationController::class, 'show']);
+    Route::get('/conversations/{id}/messages', [ConversationController::class, 'messages']);
+    Route::post('/conversations/{id}/messages', [ConversationController::class, 'sendMessage']);
 });
