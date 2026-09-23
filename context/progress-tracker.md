@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 6 — Tradie Matching & Customer Lead Selection (COMPLETE)**
+**Phase 7 — Tradie Lead Dashboard & Lead Management (COMPLETE)**
 
 ## Overall status
 
@@ -16,7 +16,7 @@ Local Pages / Tredies Services Marketplace
 | 4. Authentication | COMPLETE |
 | 5. Customer service requests | COMPLETE |
 | 6. Tradie matching & selection | COMPLETE |
-| 7. Roles + permissions | NOT STARTED |
+| 7. Tradie lead dashboard & management | COMPLETE |
 | 8. Services + questions admin | NOT STARTED |
 | 9. Location system | NOT STARTED |
 | 10. Tradie onboarding | NOT STARTED |
@@ -140,6 +140,18 @@ Local Pages / Tredies Services Marketplace
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document matching architecture in context/tradie-matching-context.md
 - [x] Commit Phase 6
+
+## Phase 7 checklist
+- [x] Create GetTradieLeadsAction (paginated retrieval of authenticated tradie's assigned leads)
+- [x] Create GetTradieLeadDetailAction (scoped retrieval of single lead with answers, attachments, and customer details)
+- [x] Create API Resources (TradieLeadResource, TradieLeadDetailResource)
+- [x] Create TradieLeadController (index and show actions)
+- [x] Register API routes (/api/v1/tradie/leads GET & /api/v1/tradie/leads/{id} GET with auth:sanctum and role:tradie)
+- [x] Write comprehensive Feature tests in tests/Feature/TradieLeadManagementTest.php (8 tests covering auth, multi-tenant scoping, pagination, answers, attachments, security)
+- [x] Verify 100% test pass rate across full test suite (83 tests, 291 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document tradie leads architecture in context/tradie-leads-context.md
+- [x] Commit Phase 7
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

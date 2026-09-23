@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
+use App\Http\Controllers\Api\V1\TradieLeadController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,4 +57,10 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
 
     Route::get('/service-requests/{id}/matching-tradies', [MatchingController::class, 'matchingTradies']);
     Route::post('/service-requests/{id}/matching-tradies', [MatchingController::class, 'selectTradies']);
+});
+
+// Tradie Lead Management
+Route::middleware(['auth:sanctum', 'role:tradie'])->prefix('tradie')->group(function () {
+    Route::get('/leads', [TradieLeadController::class, 'index']);
+    Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
 });
