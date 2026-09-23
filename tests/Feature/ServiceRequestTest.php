@@ -225,6 +225,68 @@ class ServiceRequestTest extends TestCase
             ->assertJsonValidationErrors(['service_id']);
     }
 
+    public function test_request_creation_fails_if_location_is_inactive(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $inactiveLocation = Location::factory()->create([
+            'postcode' => '2026',
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->postJson('/api/v1/service-requests', [
+                'service_id' => $service->id,
+                'location_id' => $inactiveLocation->id,
+                'postcode' => '2026',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['location_id']);
+    }
+
+    public function test_request_creation_fails_if_submitted_postcode_contradicts_selected_location(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $location = Location::factory()->create([
+            'postcode' => '2026',
+            'status' => 'active',
+        ]);
+
+        // Customer passes location ID for 2026, but contradicts with postcode 3000
+        $response = $this->actingAs($customer, 'sanctum')
+            ->postJson('/api/v1/service-requests', [
+                'service_id' => $service->id,
+                'location_id' => $location->id,
+                'postcode' => '3000',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['postcode']);
+    }
+
+    public function test_request_creation_succeeds_when_postcode_matches_selected_location(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $location = Location::factory()->create([
+            'postcode' => '2026',
+            'status' => 'active',
+        ]);
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->postJson('/api/v1/service-requests', [
+                'service_id' => $service->id,
+                'location_id' => $location->id,
+                'postcode' => '2026',
+            ]);
+
+        $response->assertCreated()
+            ->assertJsonPath('data.location_id', $location->id)
+            ->assertJsonPath('data.postcode', '2026');
+    }
+
     public function test_request_creation_enforces_required_questions(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);

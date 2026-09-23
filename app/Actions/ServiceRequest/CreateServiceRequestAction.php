@@ -2,6 +2,7 @@
 
 namespace App\Actions\ServiceRequest;
 
+use App\Models\Location;
 use App\Models\RequestAnswer;
 use App\Models\RequestAttachment;
 use App\Models\Service;
@@ -31,6 +32,24 @@ class CreateServiceRequestAction
             throw ValidationException::withMessages([
                 'service_id' => ['The selected service is invalid or inactive.'],
             ]);
+        }
+
+        if (! empty($data['location_id'])) {
+            $location = Location::where('id', $data['location_id'])
+                ->where('status', 'active')
+                ->first();
+
+            if (! $location) {
+                throw ValidationException::withMessages([
+                    'location_id' => ['The selected location is invalid or inactive.'],
+                ]);
+            }
+
+            if (! empty($location->postcode) && trim((string) $location->postcode) !== trim((string) $data['postcode'])) {
+                throw ValidationException::withMessages([
+                    'postcode' => ['The submitted postcode does not match the selected location.'],
+                ]);
+            }
         }
 
         $serviceQuestions = ServiceQuestion::where('service_id', $service->id)
