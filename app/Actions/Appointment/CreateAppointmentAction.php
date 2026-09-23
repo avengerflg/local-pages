@@ -2,6 +2,7 @@
 
 namespace App\Actions\Appointment;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Appointment;
 use App\Models\Job;
 use App\Models\Quote;
@@ -13,6 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateAppointmentAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction,
+    ) {}
+
     /**
      * Schedule an appointment for a service request with an accepted quote.
      *
@@ -84,6 +89,24 @@ class CreateAppointmentAction
             $serviceRequest->update([
                 'status' => 'scheduled',
             ]);
+
+            // Notify the assigned tradie about the scheduled appointment.
+            // tradie_id is derived from the accepted quote; never from client input.
+            $appointment->loadMissing('tradieProfile.user');
+            $tradieUser = $appointment->tradieProfile?->user;
+
+            if ($tradieUser) {
+                $this->createNotificationAction->execute(
+                    recipient: $tradieUser,
+                    type: 'appointment_scheduled',
+                    title: 'A new appointment has been scheduled',
+                    body: 'A customer has scheduled an appointment for your accepted quote.',
+                    data: [
+                        'appointment_id' => $appointment->id,
+                        'service_request_id' => $serviceRequest->id,
+                    ]
+                );
+            }
 
             return $appointment->loadMissing([
                 'serviceRequest.service',

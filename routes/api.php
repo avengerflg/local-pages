@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\JobController;
 use App\Http\Controllers\Api\V1\MatchingController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\QuoteController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -111,4 +112,15 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/reviews', [ReviewController::class, 'adminIndex']);
     Route::post('/reviews/{id}/approve', [ReviewController::class, 'adminApprove']);
     Route::post('/reviews/{id}/reject', [ReviewController::class, 'adminReject']);
+});
+
+// Phase 12: In-app notification inbox (authenticated, any role).
+// Note: the unread-count and read-all routes must be registered BEFORE {id} routes
+// to avoid Laravel matching 'unread-count' or 'read-all' as an {id} parameter.
+Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/read-all', [NotificationController::class, 'markAllRead']);
+    Route::get('/{id}', [NotificationController::class, 'show']);
+    Route::post('/{id}/read', [NotificationController::class, 'markRead']);
 });

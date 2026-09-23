@@ -2,6 +2,7 @@
 
 namespace App\Actions\Review;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Review;
 use App\Models\ReviewResponse;
 use App\Models\User;
@@ -11,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RespondToReviewAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction
+    ) {}
+
     /**
      * Allow the assigned tradie to post a single public response to a review.
      *
@@ -54,6 +59,18 @@ class RespondToReviewAction
                 'tradie_id' => $tradieProfile->id,
                 'response_text' => $data['response_text'],
             ]);
+
+            // Notify customer of review response
+            $this->createNotificationAction->execute(
+                recipient: $review->customer_id,
+                type: 'review_responded',
+                title: 'Tradie Responded to Your Review',
+                body: 'A tradie responded to your review.',
+                data: [
+                    'review_id' => $review->id,
+                    'response_id' => $response->id,
+                ]
+            );
 
             return $response->loadMissing(['review', 'tradieProfile']);
         });

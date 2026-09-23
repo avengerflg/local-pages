@@ -2,12 +2,17 @@
 
 namespace App\Actions\Review;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Review;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminApproveReviewAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction
+    ) {}
+
     /**
      * Approve a pending review, making it publicly visible.
      * Sets moderation_status to `approved` and records `published_at`.
@@ -32,6 +37,22 @@ class AdminApproveReviewAction
             'published_at' => now(),
         ]);
 
-        return $review->loadMissing(['customer', 'tradieProfile', 'response']);
+        $review->loadMissing(['customer', 'tradieProfile', 'response']);
+
+        // Notify the tradie that a review on their profile has been approved and published.
+        if ($review->tradieProfile && $review->tradieProfile->user_id) {
+            $this->createNotificationAction->execute(
+                recipient: $review->tradieProfile->user_id,
+                type: 'review_approved',
+                title: 'Review Approved',
+                body: 'A customer review on your profile has been approved and published.',
+                data: [
+                    'review_id' => $review->id,
+                    'job_id' => $review->job_id,
+                ]
+            );
+        }
+
+        return $review;
     }
 }

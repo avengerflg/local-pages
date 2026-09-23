@@ -2,6 +2,7 @@
 
 namespace App\Actions\Quote;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Quote;
 use App\Models\ServiceRequest;
 use App\Models\User;
@@ -11,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AcceptQuoteAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction,
+    ) {}
+
     /**
      * Accept a quote and atomically reject remaining pending quotes.
      */
@@ -74,6 +79,26 @@ class AcceptQuoteAction
             $serviceRequest->update([
                 'status' => 'quote_accepted',
             ]);
+
+            // Notify the tradie whose quote was accepted.
+            // tradie_id is derived from the quote model; never from client input.
+            // OPEN: Automatically-rejected tradies are NOT notified here;
+            //       this behavior is undefined and reserved for future specification.
+            $quote->loadMissing('tradieProfile.user');
+            $tradieUser = $quote->tradieProfile?->user;
+
+            if ($tradieUser) {
+                $this->createNotificationAction->execute(
+                    recipient: $tradieUser,
+                    type: 'quote_accepted',
+                    title: 'Your quote has been accepted',
+                    body: 'A customer has accepted your quote. Please proceed to schedule an appointment.',
+                    data: [
+                        'quote_id' => $quote->id,
+                        'service_request_id' => $serviceRequest->id,
+                    ]
+                );
+            }
 
             return $quote->loadMissing([
                 'serviceRequest.service',

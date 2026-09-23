@@ -2,6 +2,7 @@
 
 namespace App\Actions\Matching;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\RequestTradie;
 use App\Models\ServiceRequest;
 use App\Models\User;
@@ -13,7 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 class SelectMatchingTradiesAction
 {
     public function __construct(
-        protected FindMatchingTradiesAction $findMatchingTradiesAction
+        protected FindMatchingTradiesAction $findMatchingTradiesAction,
+        protected CreateNotificationAction $createNotificationAction,
     ) {}
 
     /**
@@ -52,7 +54,7 @@ class SelectMatchingTradiesAction
             ]);
         }
 
-        // 4. Atomically persist selections
+        // 4. Atomically persist selections and notify newly selected tradies.
         return DB::transaction(function () use ($serviceRequest, $uniqueRequestedIds) {
             $createdSelections = new Collection;
 
@@ -69,6 +71,25 @@ class SelectMatchingTradiesAction
                 );
 
                 $createdSelections->push($selection);
+
+                // Notify only for new selections; do not re-notify if already selected.
+                if ($selection->wasRecentlyCreated) {
+                    $selection->loadMissing('tradieProfile.user');
+                    $tradieUser = $selection->tradieProfile?->user;
+
+                    if ($tradieUser) {
+                        $this->createNotificationAction->execute(
+                            recipient: $tradieUser,
+                            type: 'tradie_selected',
+                            title: 'You have been selected for a job',
+                            body: 'A customer has selected you for their service request.',
+                            data: [
+                                'service_request_id' => $serviceRequest->id,
+                                'request_tradie_id' => $selection->id,
+                            ]
+                        );
+                    }
+                }
             }
 
             if ($serviceRequest->status === 'submitted') {

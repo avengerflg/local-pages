@@ -1,10 +1,10 @@
 # Progress Tracker
 
 ## Project
-Local Pages / Tredies Services Marketplace
+Local Pages / Tradies Services Marketplace
 
 ## Current phase
-**Phase 11 — Reviews & Ratings (COMPLETE)**
+**Phase 12 — Notifications & Communication (COMPLETE)**
 
 ## Overall status
 
@@ -21,9 +21,9 @@ Local Pages / Tredies Services Marketplace
 | 9. Quotations / Quote management | COMPLETE |
 | 10. Appointments & Job lifecycle foundation | COMPLETE |
 | 11. Reviews & Ratings | COMPLETE |
-| 12. Admin panel | NOT STARTED |
-| 13. Notifications | NOT STARTED |
-| 14. Testing | NOT STARTED |
+| 12. Notifications & Communication | COMPLETE |
+| 13. Admin panel | NOT STARTED |
+| 14. Testing & Hardening | NOT STARTED |
 | 15. Security/performance/deployment | NOT STARTED |
 
 ## Phase 1 checklist
@@ -218,6 +218,35 @@ Local Pages / Tredies Services Marketplace
 - [x] review_reports left unused — documented as OPEN
 - [x] Commit Phase 11
 
+## Phase 12 checklist
+- [x] Confirm notifications schema (`notifications`: user_id, type, title, body, data, read_at, timestamps)
+- [x] Create CreateNotificationAction (central trusted synchronous notification creator with server-side recipient derivation)
+- [x] Create GetNotificationsAction (paginated newest-first listing scoped to authenticated user)
+- [x] Create MarkNotificationReadAction (idempotent mark read with tenant isolation)
+- [x] Create MarkAllNotificationsReadAction (bulk mark all unread notifications read for authenticated user)
+- [x] Integrate notification triggers into existing domain actions:
+  - [x] `SelectMatchingTradiesAction` (`tradie_selected`)
+  - [x] `SendMessageAction` (`new_message`)
+  - [x] `CreateQuoteAction` (`new_quote`)
+  - [x] `AcceptQuoteAction` (`quote_accepted`)
+  - [x] `RejectQuoteAction` (`quote_rejected`)
+  - [x] `CreateAppointmentAction` (`appointment_scheduled`)
+  - [x] `StartJobAction` (`job_started`)
+  - [x] `CompleteJobAction` (`job_completed`)
+  - [x] `CreateReviewAction` (`review_submitted`)
+  - [x] `RespondToReviewAction` (`review_responded`)
+- [x] Create NotificationResource (sanitized user-facing representation with dynamic is_read calculation)
+- [x] Create NotificationController (index, show, unreadCount, markRead, markAllRead)
+- [x] Register Phase 12 API routes (`/api/v1/notifications`, `unread-count`, `read-all`, `{id}`, `{id}/read`)
+- [x] Create NotificationFactory
+- [x] Write NotificationInboxTest.php (8 tests covering auth, tenant isolation, unread counting, pagination, single show, idempotent mark read, bulk mark all read)
+- [x] Write NotificationEventTest.php (10 tests covering all 10 domain trigger events and payload integrity)
+- [x] Verify 100% test pass rate across full suite (180 tests, 711 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document notifications architecture in context/notifications-context.md
+- [x] Auto-rejected quotes notification and push/SMS delivery channels documented as OPEN
+- [x] Complete Phase 12
+
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
 
@@ -236,3 +265,5 @@ Do not mark a phase COMPLETE unless its acceptance criteria have been verified.
 - Review moderation details
 - Future automatic lead distribution
 - Production infrastructure
+- Auto-rejected quotes notification
+- Push and SMS delivery channels

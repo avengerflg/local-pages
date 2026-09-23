@@ -2,6 +2,7 @@
 
 namespace App\Actions\Quote;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Quote;
 use App\Models\QuoteAttachment;
 use App\Models\RequestTradie;
@@ -15,6 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateQuoteAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction,
+    ) {}
+
     /**
      * Submit a quote for an authorized service request.
      *
@@ -86,6 +91,22 @@ class CreateQuoteAction
                 // If request was submitted/matching, transition to quoting
                 if (in_array($serviceRequest->status, ['submitted', 'matching'], true)) {
                     $serviceRequest->update(['status' => 'quoting']);
+                }
+
+                // Notify the customer who owns the service request about the new quote.
+                // customer_id is derived from serviceRequest; never from client input.
+                $serviceRequest->loadMissing('customer');
+                if ($serviceRequest->customer) {
+                    $this->createNotificationAction->execute(
+                        recipient: $serviceRequest->customer,
+                        type: 'new_quote',
+                        title: 'You have received a new quote',
+                        body: 'A tradie has submitted a quote for your service request.',
+                        data: [
+                            'quote_id' => $quote->id,
+                            'service_request_id' => $serviceRequest->id,
+                        ]
+                    );
                 }
 
                 return $quote->loadMissing([

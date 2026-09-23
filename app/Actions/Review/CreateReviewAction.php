@@ -2,6 +2,7 @@
 
 namespace App\Actions\Review;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Job;
 use App\Models\Review;
 use App\Models\User;
@@ -11,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateReviewAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction,
+    ) {}
+
     /**
      * Create a review for a completed job owned by the authenticated customer.
      *
@@ -34,7 +39,7 @@ class CreateReviewAction
             }
 
             // Derive the owning customer from the service request; do not trust client input.
-            $job->loadMissing('serviceRequest');
+            $job->loadMissing(['serviceRequest', 'tradieProfile']);
 
             if (! $job->serviceRequest || $job->serviceRequest->customer_id !== $user->id) {
                 abort(Response::HTTP_NOT_FOUND, 'Job not found.');
@@ -70,6 +75,20 @@ class CreateReviewAction
                 'review_text' => $data['review_text'],
                 'moderation_status' => 'pending',
             ]);
+
+            // Notify the tradie of the new review
+            if ($job->tradieProfile && $job->tradieProfile->user_id) {
+                $this->createNotificationAction->execute(
+                    recipient: $job->tradieProfile->user_id,
+                    type: 'review_submitted',
+                    title: 'New Review Received',
+                    body: 'A customer left a review for your service.',
+                    data: [
+                        'review_id' => $review->id,
+                        'job_id' => $job->id,
+                    ]
+                );
+            }
 
             return $review->loadMissing([
                 'customer',

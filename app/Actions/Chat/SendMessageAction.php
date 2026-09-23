@@ -2,6 +2,7 @@
 
 namespace App\Actions\Chat;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\MessageAttachment;
@@ -13,6 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SendMessageAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction,
+    ) {}
+
     /**
      * Send a message within an authorized conversation.
      *
@@ -69,6 +74,26 @@ class SendMessageAction
                     'last_message_at' => now(),
                 ]);
 
+                // Notify the OTHER conversation participant (never the sender).
+                $recipient = $this->resolveRecipient($user, $conversation);
+
+                if ($recipient) {
+                    $notifBody = $hasBody
+                        ? (mb_strlen($body) > 100 ? mb_substr($body, 0, 97).'...' : $body)
+                        : 'You have a new message.';
+
+                    $this->createNotificationAction->execute(
+                        recipient: $recipient,
+                        type: 'new_message',
+                        title: 'New message received',
+                        body: $notifBody,
+                        data: [
+                            'conversation_id' => $conversation->id,
+                            'message_id' => $message->id,
+                        ]
+                    );
+                }
+
                 return $message->loadMissing(['sender', 'attachments']);
             });
         } catch (\Throwable $e) {
@@ -98,5 +123,31 @@ class SendMessageAction
         } else {
             abort(Response::HTTP_NOT_FOUND, 'Conversation not found.');
         }
+    }
+
+    /**
+     * Resolve the notification recipient (the other participant).
+     *
+     * Conversation stores: customer_id (User.id) and tradie_id (TradieProfile.id).
+     * Recipient is always the participant who did NOT send the message.
+     * File paths or attachment URLs are never included in the notification.
+     */
+    protected function resolveRecipient(User $sender, Conversation $conversation): ?User
+    {
+        if ($sender->role === 'customer') {
+            // Sender is customer → notify tradie's user.
+            $conversation->loadMissing('tradieProfile.user');
+
+            return $conversation->tradieProfile?->user;
+        }
+
+        if ($sender->role === 'tradie') {
+            // Sender is tradie → notify customer (conversation->customer_id IS a User.id).
+            $conversation->loadMissing('customer');
+
+            return $conversation->customer;
+        }
+
+        return null;
     }
 }

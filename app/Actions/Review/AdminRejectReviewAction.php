@@ -2,12 +2,17 @@
 
 namespace App\Actions\Review;
 
+use App\Actions\Notification\CreateNotificationAction;
 use App\Models\Review;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminRejectReviewAction
 {
+    public function __construct(
+        protected CreateNotificationAction $createNotificationAction
+    ) {}
+
     /**
      * Reject/remove a pending review.
      * Sets moderation_status to `rejected` and records `removed_at`.
@@ -34,6 +39,22 @@ class AdminRejectReviewAction
             'removed_at' => now(),
         ]);
 
-        return $review->loadMissing(['customer', 'tradieProfile', 'response']);
+        $review->loadMissing(['customer', 'tradieProfile', 'response']);
+
+        // Notify the reviewing customer that their review was rejected in moderation.
+        if ($review->customer_id) {
+            $this->createNotificationAction->execute(
+                recipient: $review->customer_id,
+                type: 'review_rejected',
+                title: 'Review Rejected',
+                body: 'Your submitted review was not approved during moderation.',
+                data: [
+                    'review_id' => $review->id,
+                    'job_id' => $review->job_id,
+                ]
+            );
+        }
+
+        return $review;
     }
 }
