@@ -361,4 +361,47 @@ class TradieMatchingTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['service_request']);
     }
+
+    public function test_repeated_tradie_selection_calls_are_idempotent(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $service = Service::factory()->create(['status' => 'active']);
+        $location = Location::factory()->create(['postcode' => '2000', 'status' => 'active']);
+
+        $serviceRequest = ServiceRequest::factory()->create([
+            'customer_id' => $customer->id,
+            'service_id' => $service->id,
+            'location_id' => $location->id,
+            'postcode' => '2000',
+            'status' => 'submitted',
+        ]);
+
+        $t1User = User::factory()->tradie()->create(['status' => 'active']);
+        $t1 = TradieProfile::factory()->create(['user_id' => $t1User->id, 'verification_status' => 'verified']);
+        $t1->services()->attach($service->id);
+        $t1->serviceAreas()->attach($location->id);
+
+        $t2User = User::factory()->tradie()->create(['status' => 'active']);
+        $t2 = TradieProfile::factory()->create(['user_id' => $t2User->id, 'verification_status' => 'verified']);
+        $t2->services()->attach($service->id);
+        $t2->serviceAreas()->attach($location->id);
+
+        // First call: select t1
+        $res1 = $this->actingAs($customer, 'sanctum')
+            ->postJson("/api/v1/service-requests/{$serviceRequest->id}/matching-tradies", [
+                'tradie_ids' => [$t1->id],
+            ]);
+        $res1->assertCreated()->assertJsonCount(1, 'data');
+        $this->assertCount(1, RequestTradie::where('request_id', $serviceRequest->id)->get());
+
+        // Second call: select t1 again alongside t2
+        $res2 = $this->actingAs($customer, 'sanctum')
+            ->postJson("/api/v1/service-requests/{$serviceRequest->id}/matching-tradies", [
+                'tradie_ids' => [$t1->id, $t2->id],
+            ]);
+        $res2->assertCreated()->assertJsonCount(2, 'data');
+
+        // Total count in database must be exactly 2 with no duplicates
+        $this->assertCount(2, RequestTradie::where('request_id', $serviceRequest->id)->get());
+    }
 }

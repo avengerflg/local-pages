@@ -57,7 +57,7 @@ class SelectMatchingTradiesAction
             $createdSelections = new Collection;
 
             foreach ($uniqueRequestedIds as $tradieId) {
-                $selection = RequestTradie::updateOrCreate(
+                $selection = RequestTradie::firstOrCreate(
                     [
                         'request_id' => $serviceRequest->id,
                         'tradie_id' => $tradieId,

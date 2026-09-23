@@ -15,7 +15,7 @@ class FindMatchingTradiesAction
      */
     public function execute(ServiceRequest $serviceRequest): Builder
     {
-        $serviceRequest->loadMissing(['service', 'location.parent.parent']);
+        $serviceRequest->loadMissing(['service', 'location']);
 
         $query = TradieProfile::query()
             ->whereHas('user', function ($q) {
@@ -29,20 +29,8 @@ class FindMatchingTradiesAction
             ->whereHas('serviceAreas', function ($q) use ($serviceRequest) {
                 $q->where('locations.status', 'active')
                     ->where(function ($locQuery) use ($serviceRequest) {
-                        $locationIds = [];
-
                         if ($serviceRequest->location_id) {
-                            $locationIds[] = $serviceRequest->location_id;
-
-                            if ($serviceRequest->location?->parent_id) {
-                                $locationIds[] = $serviceRequest->location->parent_id;
-
-                                if ($serviceRequest->location->parent?->parent_id) {
-                                    $locationIds[] = $serviceRequest->location->parent->parent_id;
-                                }
-                            }
-
-                            $locQuery->whereIn('locations.id', $locationIds);
+                            $locQuery->where('locations.id', $serviceRequest->location_id);
                         }
 
                         if (! empty($serviceRequest->postcode)) {

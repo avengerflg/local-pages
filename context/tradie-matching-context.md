@@ -14,7 +14,7 @@ Phase 6 implements the core matching engine and customer-driven lead selection w
 
 2. **Matching Criteria**:
    - **Service Match**: Tradie offers the requested service (`tradie_services` where `services.id = service_request.service_id` and `services.status = 'active'`).
-   - **Service Area Match**: Tradie services the location or postcode associated with the request (`tradie_service_areas` matching `location_id`, parent location hierarchy, or matching `postcode`).
+   - **Service Area Match**: Tradie services the exact location or postcode associated with the request (`tradie_service_areas` matching `location_id` or matching `postcode`).
    - **Tradie Eligibility**: The tradie account user must have `status = 'active'` and the profile must have `verification_status = 'verified'`. Suspended or unverified tradies are excluded.
    - **Availability Behavior (Open)**: Because `service_requests` does not capture scheduling date/time at the initial intake stage (appointments occur post-quote in later phases), service and service-area matching form the primary eligibility filter.
 
@@ -28,8 +28,8 @@ Phase 6 implements the core matching engine and customer-driven lead selection w
 
 5. **Atomic Selection & Deduplication**:
    - `SelectMatchingTradiesAction` runs inside `DB::transaction()`.
-   - Uses `RequestTradie::updateOrCreate()` to safely handle duplicate selections without unique constraint violations.
-   - Advances `service_requests.status` to `'matching'` when selections are recorded from the initial `'submitted'` state.
+   - Uses `RequestTradie::firstOrCreate()` to safely handle duplicate submissions idempotently and protect the unique constraint `(request_id, tradie_id)` without resetting the selection timestamp.
+   - Advances `service_requests.status` from `'submitted'` to `'matching'` when selections are recorded.
 
 ---
 
@@ -43,6 +43,6 @@ Phase 6 implements the core matching engine and customer-driven lead selection w
 ---
 
 ## Open Decisions (Documented)
-1. **Hierarchical Service Area Inheritance**: Suburb, Council, and State parent-child location matching are supported; advanced geo-fencing/polygons remain deferred.
+1. **Hierarchical Service Area Inheritance**: Exact location and postcode matching are supported. Geographic ancestor inheritance (e.g. tradie selecting a State or Council automatically inheriting all child Suburbs) is OPEN for future business decision.
 2. **Scheduling / Availability Matching**: Flagged as OPEN until formal calendar/intake scheduling requirements are defined.
 3. **Selection Limits**: Default technical limit of 20 tradies per selection payload.
