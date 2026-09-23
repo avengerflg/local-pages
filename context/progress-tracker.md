@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 10 — Appointment Scheduling & Job Lifecycle Foundation (COMPLETE)**
+**Phase 11 — Reviews & Ratings (COMPLETE)**
 
 ## Overall status
 
@@ -20,12 +20,11 @@ Local Pages / Tredies Services Marketplace
 | 8. Customer ↔ tradie platform chat | COMPLETE |
 | 9. Quotations / Quote management | COMPLETE |
 | 10. Appointments & Job lifecycle foundation | COMPLETE |
-| 11. Jobs & work completion | NOT STARTED |
-| 12. Reviews | NOT STARTED |
-| 13. Admin panel | NOT STARTED |
-| 14. Notifications | NOT STARTED |
-| 15. Testing | NOT STARTED |
-| 16. Security/performance/deployment | NOT STARTED |
+| 11. Reviews & Ratings | COMPLETE |
+| 12. Admin panel | NOT STARTED |
+| 13. Notifications | NOT STARTED |
+| 14. Testing | NOT STARTED |
+| 15. Security/performance/deployment | NOT STARTED |
 
 ## Phase 1 checklist
 - [x] Inspect existing repository
@@ -195,6 +194,29 @@ Local Pages / Tredies Services Marketplace
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document appointment and job architecture in context/appointments-context.md and context/jobs-context.md
 - [x] Commit Phase 10
+
+## Phase 11 checklist
+- [x] Confirm reviews schema (job_id UNIQUE, moderation_status vocabulary, review_responses UNIQUE review_id)
+- [x] Create CreateReviewAction (DB::transaction + lockForUpdate, server-side customer_id/tradie_id, eligibility check, duplicate check)
+- [x] Create GetTradieReviewsAction (approved-only public listing, paginated)
+- [x] Create RespondToReviewAction (ownership check, one-response enforcement, lockForUpdate)
+- [x] Create AdminGetPendingReviewsAction (paginated pending listing)
+- [x] Create AdminApproveReviewAction (pending → approved, records published_at)
+- [x] Create AdminRejectReviewAction (pending/flagged → rejected, records removed_at, soft-removal)
+- [x] Create StoreReviewRequest (rating: 1-5 integer, review_text: required string max:10000)
+- [x] Create StoreReviewResponseRequest (response_text: required string max:10000)
+- [x] Create ReviewResource (public fields only; no moderation internals)
+- [x] Create ReviewResponseResource (public fields)
+- [x] Create AdminReviewResource (includes moderation_status, published_at, removed_at)
+- [x] Create ReviewController (6 thin methods delegating to actions)
+- [x] Register Phase 11 API routes (6 routes: customer store, tradie respond, public listing, admin 3)
+- [x] Write ReviewManagementTest.php (28 tests, 67 assertions covering all auth paths, visibility, eligibility, duplicate prevention, moderation, response cardinality, immutability)
+- [x] Verify 100% test pass rate across full suite (161 tests, 633 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document review architecture in context/reviews-context.md
+- [x] No new migrations required (schema from Phase 2 is sufficient)
+- [x] review_reports left unused — documented as OPEN
+- [x] Commit Phase 11
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

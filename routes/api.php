@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\JobController;
 use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\QuoteController;
+use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\TradieLeadController;
@@ -53,7 +54,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Customer Service Requests, Matching, Quotes & Appointments
+// Customer Service Requests, Matching, Quotes, Appointments & Reviews
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::get('/service-requests', [ServiceRequestController::class, 'index']);
     Route::post('/service-requests', [ServiceRequestController::class, 'store']);
@@ -67,9 +68,12 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::post('/quotes/{id}/reject', [QuoteController::class, 'reject']);
 
     Route::post('/service-requests/{id}/appointments', [AppointmentController::class, 'store']);
+
+    // Phase 11: Customer review submission for completed jobs.
+    Route::post('/jobs/{id}/reviews', [ReviewController::class, 'store']);
 });
 
-// Tradie Lead Management, Quotations & Job Execution
+// Tradie Lead Management, Quotations, Job Execution & Review Response
 Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
     Route::prefix('tradie')->group(function () {
         Route::get('/leads', [TradieLeadController::class, 'index']);
@@ -80,6 +84,9 @@ Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
 
     Route::post('/jobs/{id}/start', [JobController::class, 'start']);
     Route::post('/jobs/{id}/complete', [JobController::class, 'complete']);
+
+    // Phase 11: Tradie response to a review belonging to that tradie.
+    Route::post('/reviews/{id}/response', [ReviewController::class, 'respond']);
 });
 
 // Platform Conversations, Shared Quotes, Appointments & Jobs
@@ -94,4 +101,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
     Route::get('/jobs/{id}', [JobController::class, 'show']);
+});
+
+// Phase 11: Public tradie review listing (no authentication required).
+Route::get('/tradies/{id}/reviews', [ReviewController::class, 'tradieReviews']);
+
+// Phase 11: Admin review moderation endpoints.
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/reviews', [ReviewController::class, 'adminIndex']);
+    Route::post('/reviews/{id}/approve', [ReviewController::class, 'adminApprove']);
+    Route::post('/reviews/{id}/reject', [ReviewController::class, 'adminReject']);
 });
