@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 8 — Customer ↔ Tradie Platform Chat & Conversations (COMPLETE)**
+**Phase 9 — Quotations / Quote Management (COMPLETE)**
 
 ## Overall status
 
@@ -18,19 +18,14 @@ Local Pages / Tredies Services Marketplace
 | 6. Tradie matching & selection | COMPLETE |
 | 7. Tradie lead dashboard & management | COMPLETE |
 | 8. Customer ↔ tradie platform chat | COMPLETE |
-| 9. Services + questions admin | NOT STARTED |
-| 9. Location system | NOT STARTED |
-| 10. Tradie onboarding | NOT STARTED |
-| 11. Chat | NOT STARTED |
-| 12. Quotes | NOT STARTED |
-| 13. Quotes | NOT STARTED |
-| 14. Appointments | NOT STARTED |
-| 15. Jobs | NOT STARTED |
-| 16. Reviews | NOT STARTED |
-| 17. Admin panel | NOT STARTED |
-| 18. Notifications | NOT STARTED |
-| 19. Testing | NOT STARTED |
-| 20. Security/performance/deployment | NOT STARTED |
+| 9. Quotations / Quote management | COMPLETE |
+| 10. Appointments | NOT STARTED |
+| 11. Jobs | NOT STARTED |
+| 12. Reviews | NOT STARTED |
+| 13. Admin panel | NOT STARTED |
+| 14. Notifications | NOT STARTED |
+| 15. Testing | NOT STARTED |
+| 16. Security/performance/deployment | NOT STARTED |
 
 ## Phase 1 checklist
 - [x] Inspect existing repository
@@ -163,11 +158,27 @@ Local Pages / Tredies Services Marketplace
 - [x] Create API Resources (ConversationResource, ConversationDetailResource, MessageResource, MessageAttachmentResource)
 - [x] Create ConversationController
 - [x] Register API routes (/api/v1/conversations, /api/v1/conversations/{id}, /api/v1/conversations/{id}/messages)
-- [x] Write comprehensive Feature tests in tests/Feature/ChatTest.php (8 tests covering auth, participant authorization, message exchange, attachments metadata, empty validation, security)
-- [x] Verify 100% test pass rate across full test suite (91 tests, 344 assertions)
+- [x] Write comprehensive Feature tests in tests/Feature/ChatTest.php (21 tests covering auth, participant authorization, message exchange, attachments metadata, empty validation, security)
+- [x] Verify 100% test pass rate across full test suite (104 tests, 386 assertions)
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document chat architecture in context/chat-context.md
 - [x] Commit Phase 8
+
+## Phase 9 checklist
+- [x] Create CreateQuoteAction (tradie quote creation with request_tradies authorization, eligibility check, and private attachment handling)
+- [x] Create GetCustomerQuotesAction (paginated retrieval of quotes for customer's service request)
+- [x] Create GetQuoteDetailAction (scoped retrieval of single quote for customer or tradie author)
+- [x] Create AcceptQuoteAction (atomic quote acceptance, pessimistic lock, auto-rejection of pending quotes, and quote_accepted status transition)
+- [x] Create RejectQuoteAction (explicit individual quote rejection)
+- [x] Create Form Request CreateQuoteRequest with validation rules
+- [x] Create API Resources (QuoteResource, QuoteDetailResource, QuoteAttachmentResource)
+- [x] Create QuoteController
+- [x] Register API routes (/api/v1/service-requests/{id}/quotes, /api/v1/quotes/{id}, /api/v1/quotes/{id}/accept, /api/v1/quotes/{id}/reject)
+- [x] Write comprehensive Feature tests in tests/Feature/QuoteManagementTest.php (15 tests covering tradie submission, customer comparison, single view authorization, atomic acceptance, cascading rejection, input validation, and privacy)
+- [x] Verify 100% test pass rate across full test suite (119 tests, 467 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document quote architecture in context/quotes-context.md
+- [x] Commit Phase 9
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

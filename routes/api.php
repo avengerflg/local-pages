@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MatchingController;
+use App\Http\Controllers\Api\V1\QuoteController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\TradieLeadController;
@@ -50,7 +51,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Customer Service Requests & Matching
+// Customer Service Requests, Matching & Quotes
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::get('/service-requests', [ServiceRequestController::class, 'index']);
     Route::post('/service-requests', [ServiceRequestController::class, 'store']);
@@ -58,19 +59,29 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
 
     Route::get('/service-requests/{id}/matching-tradies', [MatchingController::class, 'matchingTradies']);
     Route::post('/service-requests/{id}/matching-tradies', [MatchingController::class, 'selectTradies']);
+
+    Route::get('/service-requests/{id}/quotes', [QuoteController::class, 'index']);
+    Route::post('/quotes/{id}/accept', [QuoteController::class, 'accept']);
+    Route::post('/quotes/{id}/reject', [QuoteController::class, 'reject']);
 });
 
-// Tradie Lead Management
-Route::middleware(['auth:sanctum', 'role:tradie'])->prefix('tradie')->group(function () {
-    Route::get('/leads', [TradieLeadController::class, 'index']);
-    Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
+// Tradie Lead Management & Quotations
+Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
+    Route::prefix('tradie')->group(function () {
+        Route::get('/leads', [TradieLeadController::class, 'index']);
+        Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
+    });
+
+    Route::post('/service-requests/{id}/quotes', [QuoteController::class, 'store']);
 });
 
-// Platform Conversations & Chat
+// Platform Conversations & Shared Quotation Views
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations', [ConversationController::class, 'index']);
     Route::post('/conversations', [ConversationController::class, 'store']);
     Route::get('/conversations/{id}', [ConversationController::class, 'show']);
     Route::get('/conversations/{id}/messages', [ConversationController::class, 'messages']);
     Route::post('/conversations/{id}/messages', [ConversationController::class, 'sendMessage']);
+
+    Route::get('/quotes/{id}', [QuoteController::class, 'show']);
 });
