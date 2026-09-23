@@ -264,9 +264,12 @@ class TradieLeadManagementTest extends TestCase
             ->assertJsonPath('data.service_request.answers.1.question_text', 'Additional Details')
             ->assertJsonPath('data.service_request.answers.1.answer_text', 'House built in 1980s with old fuse box')
             ->assertJsonCount(1, 'data.service_request.attachments')
+            ->assertJsonPath('data.service_request.attachments.0.id', $attachment->id)
             ->assertJsonPath('data.service_request.attachments.0.original_name', 'switchboard.jpg')
             ->assertJsonPath('data.service_request.attachments.0.mime_type', 'image/jpeg')
-            ->assertJsonPath('data.service_request.attachments.0.file_size', 102400);
+            ->assertJsonPath('data.service_request.attachments.0.file_size', 102400)
+            ->assertJsonMissingPath('data.service_request.attachments.0.url')
+            ->assertJsonMissingPath('data.service_request.attachments.0.file_path');
     }
 
     public function test_tradie_cannot_access_another_tradies_lead(): void

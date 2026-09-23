@@ -20,7 +20,7 @@ Phase 7 implements the backend and API foundation for the **Tradie Lead Manageme
 3. **Data Exposure & Sanitization**:
    - **Service Request Data**: Request ID, title, description, status, postcode, submitted timestamp, service details, and location details.
    - **Service Answers**: Text answers, single-choice answers (with option labels and values), and multiple-choice answers are properly serialized.
-   - **Attachments**: Attachment metadata (original filename, MIME type, file size) and safe public storage URLs are provided. Server filesystem paths and cloud storage secrets are never exposed.
+   - **Attachments**: Safe attachment metadata (id, original filename, MIME type, file size, created_at) is exposed to the authorized tradie. Public download URLs, temporary/signed URLs, raw storage keys, filesystem paths, and storage credentials are never exposed.
    - **Customer Privacy**: Only safe summary information (customer ID and name) is exposed. Private contact credentials (e.g. passwords, tokens, auth state) remain strictly concealed.
 
 4. **Lead Status Lifecycle**:
@@ -40,6 +40,6 @@ Phase 7 implements the backend and API foundation for the **Tradie Lead Manageme
 
 ## Open Decisions (Documented)
 1. **Tradie Accept / Decline Workflow**: Explicit accept/decline action endpoints remain deferred and marked as OPEN.
-2. **Secure Attachment Delivery**: Standard storage URL mapping is supported; temporary signed URLs and tokenized download streams remain OPEN for future storage hardening.
+2. **Secure Attachment Delivery**: Actual file downloading is not currently exposed by the Phase 7 API; secure signed/temporary expiring attachment delivery remains OPEN.
 3. **Lead Expiration / Limits**: Time-based lead expiry or active lead capacity limits remain OPEN for future business configuration.
 4. **Direct Contact Info**: Phone/email reveal rules (e.g. upon chat initiation or quote acceptance) remain OPEN for subsequent communication phases.
