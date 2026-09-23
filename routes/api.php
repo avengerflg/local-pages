@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
+use App\Http\Controllers\Api\V1\ServiceController;
+use App\Http\Controllers\Api\V1\ServiceRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthCheckController::class);
 
+// Service catalog discovery
+Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/services/{service}', [ServiceController::class, 'show']);
+
+// Authentication routes
 Route::prefix('auth')->group(function () {
     // Public routes with rate limiting
     Route::post('/register/customer', [AuthController::class, 'registerCustomer'])->middleware('throttle:10,1');
@@ -38,4 +45,11 @@ Route::prefix('auth')->group(function () {
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
             ->middleware('throttle:6,1');
     });
+});
+
+// Customer Service Requests
+Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
+    Route::get('/service-requests', [ServiceRequestController::class, 'index']);
+    Route::post('/service-requests', [ServiceRequestController::class, 'store']);
+    Route::get('/service-requests/{id}', [ServiceRequestController::class, 'show']);
 });

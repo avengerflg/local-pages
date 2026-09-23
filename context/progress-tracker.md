@@ -4,7 +4,7 @@
 Local Pages / Tredies Services Marketplace
 
 ## Current phase
-**Phase 4 — Authentication & Account Foundation (COMPLETE)**
+**Phase 5 — Customer Service Request / Lead Creation (COMPLETE)**
 
 ## Overall status
 
@@ -14,11 +14,11 @@ Local Pages / Tredies Services Marketplace
 | 2. Database migrations | COMPLETE |
 | 3. Models + relationships | COMPLETE |
 | 4. Authentication | COMPLETE |
-| 5. Roles + permissions | NOT STARTED |
-| 6. Services + questions | NOT STARTED |
-| 7. Location system | NOT STARTED |
-| 8. Tradie onboarding | NOT STARTED |
-| 9. Customer requests | NOT STARTED |
+| 5. Customer service requests | COMPLETE |
+| 6. Roles + permissions | NOT STARTED |
+| 7. Services + questions admin | NOT STARTED |
+| 8. Location system | NOT STARTED |
+| 9. Tradie onboarding | NOT STARTED |
 | 10. Matching engine | NOT STARTED |
 | 11. Tradie selection | NOT STARTED |
 | 12. Chat | NOT STARTED |
@@ -115,13 +115,18 @@ Local Pages / Tredies Services Marketplace
 - [x] Document authentication architecture in context/authentication-context.md
 - [x] Commit Phase 4 (commit `d85ae79`)
 
-## Phase 5 checklist (NOT STARTED)
-- [ ] Define role capabilities & permissions matrix (Customer, Tradie, Admin)
-- [ ] Implement Laravel authorization Gates & Policies for domain models
-- [ ] Implement Admin-only route protection and middleware
-- [ ] Write feature tests for role-based authorization rules
-- [ ] Run test suite & Pint verification
-- [ ] Update documentation & commit Phase 5
+## Phase 5 checklist
+- [x] Create API Resources (ServiceResource, ServiceQuestionResource, ServiceQuestionOptionResource, LocationResource, RequestAnswerResource, RequestAttachmentResource, ServiceRequestResource)
+- [x] Create CreateServiceRequestAction encapsulating question validation, conditional rules, and transactional persistence
+- [x] Create CreateServiceRequestRequest form request with customer authorization and file validation
+- [x] Create ServiceController for active services and question discovery
+- [x] Create ServiceRequestController for creating and scoping customer requests
+- [x] Register API routes (/api/v1/services, /api/v1/services/{service}, /api/v1/service-requests)
+- [x] Write comprehensive Feature tests in tests/Feature/ServiceRequestTest.php (18 tests covering discovery, answers, conditional rules, attachments, scoping, security)
+- [x] Verify 100% test pass rate across full test suite (58 tests, 200 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document request intake architecture in context/service-request-context.md
+- [x] Commit Phase 5
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
