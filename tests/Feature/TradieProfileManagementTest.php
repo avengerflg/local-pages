@@ -61,6 +61,40 @@ class TradieProfileManagementTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_suspended_tradie_cannot_access_tradie_self_service_endpoints(): void
+    {
+        $suspendedTradie = User::factory()->tradie()->create(['status' => 'suspended']);
+        TradieProfile::factory()->create(['user_id' => $suspendedTradie->id]);
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/profile')
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->putJson('/api/v1/tradie/profile', ['business_name' => 'New Name'])
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/services')
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/service-areas')
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/documents')
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/availability')
+            ->assertForbidden();
+
+        $this->actingAs($suspendedTradie, 'sanctum')
+            ->getJson('/api/v1/tradie/onboarding-status')
+            ->assertForbidden();
+    }
+
     public function test_tradie_can_view_own_profile(): void
     {
         $user = User::factory()->tradie()->create();
@@ -213,6 +247,31 @@ class TradieProfileManagementTest extends TestCase
         $this->assertFalse($profile->fresh()->services->contains($service1));
     }
 
+    public function test_inactive_service_cannot_be_attached_or_synced(): void
+    {
+        $user = User::factory()->tradie()->create();
+        TradieProfile::factory()->create(['user_id' => $user->id]);
+
+        $inactiveService = Service::factory()->create(['status' => 'inactive']);
+        $activeService = Service::factory()->create(['status' => 'active']);
+
+        // 1. Inactive service attach rejected
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/v1/tradie/services', [
+                'service_id' => $inactiveService->id,
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['service_id']);
+
+        // 2. Inactive service in sync rejected
+        $this->actingAs($user, 'sanctum')
+            ->putJson('/api/v1/tradie/services', [
+                'service_ids' => [$activeService->id, $inactiveService->id],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['service_ids.1']);
+    }
+
     public function test_tradie_cannot_detach_unattached_or_another_tradies_service(): void
     {
         $user1 = User::factory()->tradie()->create();
@@ -289,6 +348,31 @@ class TradieProfileManagementTest extends TestCase
             ->assertJsonPath('data.0.id', $location2->id);
 
         $this->assertFalse($profile->fresh()->serviceAreas->contains($location1));
+    }
+
+    public function test_inactive_location_cannot_be_attached_or_synced(): void
+    {
+        $user = User::factory()->tradie()->create();
+        TradieProfile::factory()->create(['user_id' => $user->id]);
+
+        $inactiveLocation = Location::factory()->create(['status' => 'inactive']);
+        $activeLocation = Location::factory()->create(['status' => 'active']);
+
+        // 1. Inactive location attach rejected
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/v1/tradie/service-areas', [
+                'location_id' => $inactiveLocation->id,
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['location_id']);
+
+        // 2. Inactive location in sync rejected
+        $this->actingAs($user, 'sanctum')
+            ->putJson('/api/v1/tradie/service-areas', [
+                'location_ids' => [$activeLocation->id, $inactiveLocation->id],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['location_ids.1']);
     }
 
     public function test_tradie_cannot_detach_unattached_or_another_tradies_service_area(): void

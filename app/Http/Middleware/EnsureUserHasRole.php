@@ -17,7 +17,7 @@ class EnsureUserHasRole
     {
         $user = $request->user();
 
-        if (! $user || ! in_array($user->role, $roles, true)) {
+        if (! $user || ! in_array($user->role, $roles, true) || $user->status !== 'active') {
             return response()->json([
                 'message' => 'Forbidden. You do not have permission to access this resource.',
             ], Response::HTTP_FORBIDDEN);
