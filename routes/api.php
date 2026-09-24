@@ -19,6 +19,12 @@ use App\Http\Controllers\Api\V1\QuoteController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
+use App\Http\Controllers\Api\V1\Tradie\TradieAvailabilityController;
+use App\Http\Controllers\Api\V1\Tradie\TradieDocumentController;
+use App\Http\Controllers\Api\V1\Tradie\TradieOnboardingController;
+use App\Http\Controllers\Api\V1\Tradie\TradieProfileController;
+use App\Http\Controllers\Api\V1\Tradie\TradieServiceAreaController;
+use App\Http\Controllers\Api\V1\Tradie\TradieServiceController;
 use App\Http\Controllers\Api\V1\TradieLeadController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,11 +86,42 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::post('/jobs/{id}/reviews', [ReviewController::class, 'store']);
 });
 
-// Tradie Lead Management, Quotations, Job Execution & Review Response
+// Tradie Lead Management, Quotations, Job Execution, Review Response & Self-Service Onboarding
 Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
     Route::prefix('tradie')->group(function () {
+        // Leads
         Route::get('/leads', [TradieLeadController::class, 'index']);
         Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
+
+        // Phase 14: Profile Self-Service
+        Route::get('/profile', [TradieProfileController::class, 'show']);
+        Route::match(['put', 'patch'], '/profile', [TradieProfileController::class, 'update']);
+
+        // Phase 14: Services Management
+        Route::get('/services', [TradieServiceController::class, 'index']);
+        Route::post('/services', [TradieServiceController::class, 'store']);
+        Route::put('/services', [TradieServiceController::class, 'update']);
+        Route::delete('/services/{id}', [TradieServiceController::class, 'destroy']);
+
+        // Phase 14: Service Areas Management
+        Route::get('/service-areas', [TradieServiceAreaController::class, 'index']);
+        Route::post('/service-areas', [TradieServiceAreaController::class, 'store']);
+        Route::put('/service-areas', [TradieServiceAreaController::class, 'update']);
+        Route::delete('/service-areas/{id}', [TradieServiceAreaController::class, 'destroy']);
+
+        // Phase 14: Documents Management
+        Route::get('/documents', [TradieDocumentController::class, 'index']);
+        Route::post('/documents', [TradieDocumentController::class, 'store']);
+        Route::delete('/documents/{id}', [TradieDocumentController::class, 'destroy']);
+
+        // Phase 14: Availability Management
+        Route::get('/availability', [TradieAvailabilityController::class, 'index']);
+        Route::post('/availability', [TradieAvailabilityController::class, 'store']);
+        Route::match(['put', 'patch'], '/availability/{id}', [TradieAvailabilityController::class, 'update']);
+        Route::delete('/availability/{id}', [TradieAvailabilityController::class, 'destroy']);
+
+        // Phase 14: Onboarding Status Checklist
+        Route::get('/onboarding-status', [TradieOnboardingController::class, 'status']);
     });
 
     Route::post('/service-requests/{id}/quotes', [QuoteController::class, 'store']);

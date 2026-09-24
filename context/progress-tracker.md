@@ -255,6 +255,27 @@ Local Pages / Tradies Services Marketplace
 - [x] Document admin architecture in context/admin-context.md
 - [x] Complete Phase 13
 
+## Phase 14 checklist
+- [x] Implement Tradie Profile self-service endpoints (`GET /api/v1/tradie/profile`, `PUT/PATCH /api/v1/tradie/profile`)
+- [x] Implement Whitelist filtering on profile updates to protect `verification_status`, `verified_at`, `user_id`, and `role`
+- [x] Implement Tradie Services self-service endpoints (`GET`, `POST`, `PUT`, `DELETE /api/v1/tradie/services`)
+- [x] Enforce active service requirement and prevent inactive service attachment
+- [x] Implement Tradie Service Areas self-service endpoints (`GET`, `POST`, `PUT`, `DELETE /api/v1/tradie/service-areas`)
+- [x] Enforce active location requirement and prevent inactive location attachment
+- [x] Implement Tradie Verification Document self-service endpoints (`GET`, `POST`, `DELETE /api/v1/tradie/documents`)
+- [x] Enforce private document storage with non-exposed file paths, MIME verification, and max 10MB file limit
+- [x] Enforce document deletion rules (pending and rejected documents can be deleted; approved documents cannot be deleted)
+- [x] Implement Tradie Availability self-service endpoints (`GET`, `POST`, `PUT/PATCH`, `DELETE /api/v1/tradie/availability`)
+- [x] Support weekly schedule slots (`day_of_week`, `start_time`, `end_time`) and date blackout overrides (`specific_date`, `is_available`, `notes`)
+- [x] Implement Tradie Onboarding Status summary endpoint (`GET /api/v1/tradie/onboarding-status`)
+- [x] Enforce strict multi-tenant IDOR protection across all self-service resources
+- [x] Create dedicated Form Requests and API Resources
+- [x] Write comprehensive Feature tests in `tests/Feature/TradieProfileManagementTest.php` (16 tests, 135 assertions)
+- [x] Verify 100% test pass rate across full regression test suite (214 tests, 973 assertions)
+- [x] Run Laravel Pint code style verification (passed)
+- [x] Document onboarding architecture in `context/tradie-onboarding-context.md`
+- [x] Complete Phase 14
+
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.
 
