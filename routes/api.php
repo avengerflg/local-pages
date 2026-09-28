@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\AdminLocationController;
 use App\Http\Controllers\Api\V1\Admin\AdminQuestionController;
+use App\Http\Controllers\Api\V1\Admin\AdminReviewReportController;
 use App\Http\Controllers\Api\V1\Admin\AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\AdminTradieController;
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\QuoteController;
 use App\Http\Controllers\Api\V1\ReviewController;
+use App\Http\Controllers\Api\V1\ReviewReportController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\Tradie\TradieAvailabilityController;
@@ -163,6 +165,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/jobs/{id}', [JobController::class, 'show']);
 });
 
+// Phase 16: Review Reporting (Customer & Tradie)
+Route::middleware(['auth:sanctum', 'role:customer,tradie'])->group(function () {
+    Route::post('/reviews/{id}/reports', [ReviewReportController::class, 'store']);
+});
+
 // Phase 11: Public tradie review listing (no authentication required).
 Route::get('/tradies/{id}/reviews', [ReviewController::class, 'tradieReviews']);
 
@@ -209,6 +216,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/reviews', [ReviewController::class, 'adminIndex']);
     Route::post('/reviews/{id}/approve', [ReviewController::class, 'adminApprove']);
     Route::post('/reviews/{id}/reject', [ReviewController::class, 'adminReject']);
+
+    // Phase 16: Review Report moderation
+    Route::get('/review-reports', [AdminReviewReportController::class, 'index']);
+    Route::post('/review-reports/{id}/resolve', [AdminReviewReportController::class, 'resolve']);
 });
 
 // Phase 12: In-app notification inbox (authenticated, any role).

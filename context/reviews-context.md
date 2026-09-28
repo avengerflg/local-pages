@@ -91,9 +91,18 @@ The `reviews.moderation_status` column uses the following values (defined in Pha
 
 ---
 
-## Review Reporting — OPEN
+## Review Reporting (Phase 16)
 
-The `review_reports` table exists as schema groundwork from Phase 2. **No review reporting API has been implemented in Phase 11.** The workflow for customers or tradies to flag a review, and for admins to resolve reports, remains **OPEN** for a future phase.
+The `review_reports` table allows authenticated customers and tradies to submit a report against an existing review.
+- **Who can report**: Any authenticated customer or tradie.
+- **Duplicate rule**: A user may submit only **one report** for the same review (enforced at the application level).
+- **Public Visibility**: Submitting a report leaves the review's `moderation_status` unchanged. It is **not** automatically flagged or hidden.
+- **Admin Moderation**: Admins list pending reports (`GET /api/v1/admin/review-reports`) and resolve them (`POST /api/v1/admin/review-reports/{id}/resolve`).
+- **Resolution**:
+  - `dismiss`: The report is marked resolved, and the review remains unchanged (public visibility is preserved).
+  - `uphold`: The report is marked resolved, and the underlying review's `moderation_status` is updated to `rejected`, removing it from public visibility.
+- **Notifications**: No notifications are triggered.
+- **Attachments**: Review reports are strictly text-based (`reason`).
 
 ---
 
@@ -102,8 +111,7 @@ The `review_reports` table exists as schema groundwork from Phase 2. **No review
 1. **Response editing & deletion**: Whether a tradie can edit or delete their submitted response is OPEN and undefined.
 2. **Customer reply to response**: Whether customers can reply to tradie responses is OPEN. No response threads are implemented.
 3. **Review text business length limit**: The 10 000-character limit applied in Phase 11 is a technical application-level safety limit. A product-specific limit is an OPEN DECISION.
-4. **Review reporting workflow**: Flagging reviews via `review_reports`, admin report resolution, and reporter-facing features are OPEN.
-5. **Approved review editing by admin**: Whether admin can re-moderate an already-approved review (e.g., retroactively reject) is OPEN.
+4. **Approved review editing by admin**: Whether admin can re-moderate an already-approved review (e.g., retroactively reject) is OPEN.
 
 ---
 
