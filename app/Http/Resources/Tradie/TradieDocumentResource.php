@@ -4,6 +4,7 @@ namespace App\Http\Resources\Tradie;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\URL;
 
 class TradieDocumentResource extends JsonResource
 {
@@ -22,6 +23,11 @@ class TradieDocumentResource extends JsonResource
             'mime_type' => $this->mime_type,
             'file_size' => $this->file_size,
             'status' => $this->status,
+            'download_url' => URL::temporarySignedRoute(
+                'files.download',
+                now()->addMinutes(60),
+                ['type' => 'tradie_documents', 'id' => $this->id]
+            ),
             'reviewed_at' => $this->reviewed_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

@@ -151,7 +151,7 @@ class CreateServiceRequestAction
             // Save attachments
             foreach ($attachments as $file) {
                 if ($file instanceof UploadedFile) {
-                    $path = $file->store('request-attachments', 'public');
+                    $path = $file->store('request-attachments', 'local');
 
                     RequestAttachment::create([
                         'request_id' => $serviceRequest->id,

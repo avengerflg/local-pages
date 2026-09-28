@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\CustomerProfileController;
+use App\Http\Controllers\Api\V1\FileDownloadController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\JobController;
 use App\Http\Controllers\Api\V1\LocationController;
@@ -220,6 +221,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Phase 16: Review Report moderation
     Route::get('/review-reports', [AdminReviewReportController::class, 'index']);
     Route::post('/review-reports/{id}/resolve', [AdminReviewReportController::class, 'resolve']);
+});
+
+// Phase 17: Secure File Access
+Route::middleware(['auth:sanctum', 'signed'])->group(function () {
+    Route::get('/files/{type}/{id}', [FileDownloadController::class, 'download'])->name('files.download');
 });
 
 // Phase 12: In-app notification inbox (authenticated, any role).
