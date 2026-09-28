@@ -48,3 +48,6 @@ Phase 10 implements the backend and REST API foundation for the **Appointment Sc
 1. **Rescheduling & Cancellation**: Dedicated reschedule/cancel endpoints and cancellation notice policies remain OPEN.
 2. **Timezone & Business Hours**: Stored in standard datetimes; tradie timezone and availability window enforcement remain OPEN.
 3. **Calendar Integrations & Reminders**: External calendar sync (Google Calendar, iCal) and transactional SMS/email reminders remain OPEN.
+
+## Cancellation (Phase 19)
+Appointments can be cancelled by Customer, Tradie, or Admin. This synchronously cancels the Job and ServiceRequest. No payment/refund/penalty logic. No rescheduling.

@@ -164,6 +164,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
     Route::get('/jobs/{id}', [JobController::class, 'show']);
+    Route::post('/jobs/{id}/cancel', [JobController::class, 'cancel']);
 });
 
 // Phase 16: Review Reporting (Customer & Tradie)

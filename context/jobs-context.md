@@ -55,3 +55,8 @@ Phase 10 establishes the backend and REST API foundation for the **Job Execution
 1. **Automated Time-Based Job Start**: Automated cron/time-based transition to `in_progress` at appointment start time remains OPEN; manual tradie start endpoint is provided.
 2. **Review & Rating Collection**: Post-completion customer review submission and admin moderation remain for Phase 12.
 3. **Payments, Invoices & Payouts**: Excluded from scope; no financial processing or billing records are generated.
+
+## Cancellation (Phase 19)
+Jobs can be cancelled by Customer, Tradie, or Admin if they are in `scheduled` state. This synchronously cancels the Appointment and ServiceRequest.
+## Synchronization
+When a job completes (`in_progress` -> `completed`), the corresponding appointment and service request statuses are automatically transitioned to `completed`.

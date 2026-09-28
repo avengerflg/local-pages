@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Job\CancelJobAction;
 use App\Actions\Job\CompleteJobAction;
 use App\Actions\Job\GetJobDetailAction;
 use App\Actions\Job\GetJobsAction;
@@ -54,6 +55,18 @@ class JobController extends Controller
      * Mark an in-progress job as completed (tradie only).
      */
     public function complete(Request $request, int $id, CompleteJobAction $action): JsonResponse
+    {
+        $job = $action->execute($request->user(), $id);
+
+        return (new JobResource($job))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * Cancel a scheduled job (Customer, Tradie, Admin).
+     */
+    public function cancel(Request $request, int $id, CancelJobAction $action): JsonResponse
     {
         $job = $action->execute($request->user(), $id);
 

@@ -80,3 +80,6 @@ Phase 12 establishes the in-app notification and communication pipeline across t
    - **OPEN** (User opt-in/opt-out configuration system deferred).
 6. **Auto-Rejected Quotes Notification**:
    - **OPEN** (Automated notifications for competitor quotes auto-rejected on quote acceptance remain open).
+
+## Phase 19 Updates
+Added `appointment_cancelled` notification for when a job/appointment is cancelled. If Customer cancels, Tradie is notified. If Tradie cancels, Customer is notified. If Admin cancels, both are notified.

@@ -59,3 +59,6 @@ Phase 5 implements the customer-facing intake workflow for exploring available m
 ## Open Decisions (Documented)
 1. **Configurable Attachment Limits**: Default 10MB per file and 10 attachments maximum per request.
 2. **Initial Request Status**: Defaulting to `'submitted'` with `submitted_at` timestamp.
+
+## Status Synchronization & Cancellation (Phase 19)
+Service requests automatically transition to `cancelled` if their job is cancelled, and `completed` if their job is completed. Cancelled requests do not automatically rematch with other tradies.
