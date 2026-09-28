@@ -2,84 +2,106 @@ import Link from 'next/link';
 
 export const PublicFooter = () => {
   return (
-    <footer className="bg-brand-navy border-t border-brand-navy-light text-white">
-      <div className="mx-auto max-w-7xl px-6 py-12 lg:py-16 lg:px-8">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div className="space-y-6 xl:col-span-1">
-            <Link href="/" className="font-bold text-2xl tracking-tight">
-              Local <span className="text-brand-pink">Pages</span>
+    <footer className="bg-[#061A33] text-white">
+      <div className="mx-auto max-w-[1400px] px-6 py-16 lg:py-20 lg:px-8">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-8">
+          
+          {/* Logo and Description */}
+          <div className="space-y-6 xl:col-span-4 pr-4">
+            <Link href="/" className="flex items-center gap-2">
+              <svg className="w-8 h-8 text-[#F50067]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+              </svg>
+              <span className="font-bold text-[24px] tracking-tight">
+                Local <span className="text-[#F50067]">Pages</span>
+              </span>
             </Link>
-            <p className="text-sm leading-6 text-gray-300 max-w-xs">
-              A better way to find a tradie. Helping homeowners connect with reliable, verified service.
+            <p className="text-[13px] leading-[1.6] text-[#9CA3AF] max-w-[280px]">
+              A better way to find a tradie. Helping homeowners connect with reliable, verified service pros.
             </p>
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-brand-pink">
-                <span className="sr-only">Facebook</span>
-                <div className="w-6 h-6 bg-gray-400 rounded-full"></div>
+            <div className="flex space-x-4 pt-2">
+              <a href="#" className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center hover:opacity-80 transition-opacity">
+                <span className="text-white font-bold text-xs">f</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-brand-pink">
-                <span className="sr-only">Instagram</span>
-                <div className="w-6 h-6 bg-gray-400 rounded-full"></div>
+              <a href="#" className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 flex items-center justify-center hover:opacity-80 transition-opacity">
+                <span className="text-white font-bold text-xs">ig</span>
+              </a>
+              <a href="#" className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:opacity-80 transition-opacity">
+                <span className="text-blue-500 font-bold text-xs">G</span>
               </a>
             </div>
           </div>
           
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
+          {/* Links and Subscription */}
+          <div className="xl:col-span-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-white uppercase tracking-wider">For Homeowners</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {['Find a trade', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
+                <h3 className="text-[13px] font-bold text-white mb-6">For homeowners</h3>
+                <ul role="list" className="space-y-4">
+                  {['Find a tradie', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
                     <li key={item}>
-                      <a href="#" className="text-sm leading-6 text-gray-300 hover:text-brand-pink transition-colors">{item}</a>
+                      <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-white transition-colors">{item}</a>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-white uppercase tracking-wider">For Businesses</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {['Find a trade', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
-                    <li key={item}>
-                      <a href="#" className="text-sm leading-6 text-gray-300 hover:text-brand-pink transition-colors">{item}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
+              
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-white uppercase tracking-wider">About</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {['Find a trade', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
+                <h3 className="text-[13px] font-bold text-white mb-6">For businesses</h3>
+                <ul role="list" className="space-y-4">
+                  {['Find a tradie', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
                     <li key={item}>
-                      <a href="#" className="text-sm leading-6 text-gray-300 hover:text-brand-pink transition-colors">{item}</a>
+                      <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-white transition-colors">{item}</a>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-white uppercase tracking-wider">Get the Latest</h3>
-                <p className="mt-6 text-sm leading-6 text-gray-300">Home tips, trends and updates.</p>
-                <form className="mt-4 sm:flex sm:max-w-md">
-                  <label htmlFor="email-address" className="sr-only">Email address</label>
-                  <input type="email" name="email-address" id="email-address" autoComplete="email" required className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-pink sm:w-64 sm:text-sm sm:leading-6" placeholder="Your email address" />
-                  <div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
-                    <button type="submit" className="flex w-full items-center justify-center rounded-md bg-brand-pink px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-pink-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-pink">
-                      Subscribe
-                    </button>
-                  </div>
+              
+              <div>
+                <h3 className="text-[13px] font-bold text-white mb-6">About</h3>
+                <ul role="list" className="space-y-4">
+                  {['Find a tradie', 'Cost guides', 'Resources', 'FAQs'].map((item) => (
+                    <li key={item}>
+                      <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-white transition-colors">{item}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="col-span-2 md:col-span-1 min-w-[240px]">
+                <h3 className="text-[13px] font-bold text-white mb-3">Get the latest</h3>
+                <p className="text-[13px] text-[#9CA3AF] mb-4">Home tips, trends and updates.</p>
+                <form className="relative flex items-center w-full max-w-sm">
+                  <input 
+                    type="email" 
+                    required 
+                    className="w-full h-11 pl-4 pr-12 rounded-full border-none text-[13px] text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#F50067] outline-none" 
+                    placeholder="Your email address" 
+                  />
+                  <button 
+                    type="submit" 
+                    className="absolute right-1 w-9 h-9 rounded-full bg-[#F50067] flex items-center justify-center text-white hover:bg-[#d40058] transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </button>
                 </form>
               </div>
+              
             </div>
           </div>
+          
         </div>
         
-        <div className="mt-12 border-t border-white/10 pt-8 sm:mt-16">
-          <p className="text-xs leading-5 text-gray-400 text-center">
-            Copyright © 2026 Local Pages | Designed & Developed By Webzoo Australia
+        {/* Copyright */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-center items-center gap-2">
+          <p className="text-[12px] text-[#9CA3AF]">
+            Copyright © 2026 Local Pages | Designed & Developed By <a href="#" className="text-[#F50067] hover:text-white transition-colors">Webzee Australia</a>
           </p>
         </div>
+        
       </div>
     </footer>
   );
