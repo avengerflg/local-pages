@@ -12,6 +12,7 @@ use App\Models\RequestTradie;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\ServiceRequest;
+use App\Models\TradieAvailability;
 use App\Models\TradieProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -238,6 +239,14 @@ class NotificationEventTest extends TestCase
             'request_id' => $serviceRequest->id,
             'tradie_id' => $tradieProfile->id,
             'status' => 'accepted',
+        ]);
+
+        TradieAvailability::create([
+            'tradie_id' => $tradieProfile->id,
+            'day_of_week' => now()->addDays(2)->dayOfWeek,
+            'start_time' => '00:00:00',
+            'end_time' => '23:59:59',
+            'is_available' => true,
         ]);
 
         $this->actingAs($customer, 'sanctum')

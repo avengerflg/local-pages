@@ -28,7 +28,7 @@ class AdminTradieDocumentResource extends JsonResource
             'download_url' => URL::temporarySignedRoute(
                 'files.download',
                 now()->addMinutes(60),
-                ['type' => 'tradie_documents', 'id' => $this->id]
+                ['type' => 'tradie-document', 'id' => $this->id]
             ),
             'reviewed_by' => $this->reviewed_by,
             'reviewed_at' => $this->reviewed_at?->toIso8601String(),

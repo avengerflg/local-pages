@@ -9,6 +9,7 @@ use App\Models\Quote;
 use App\Models\RequestTradie;
 use App\Models\Service;
 use App\Models\ServiceRequest;
+use App\Models\TradieAvailability;
 use App\Models\TradieProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -102,6 +103,14 @@ class AppointmentAndJobLifecycleTest extends TestCase
         $startsAt = now()->addDays(2)->setHour(10)->setMinute(0)->setSecond(0);
         $endsAt = now()->addDays(2)->setHour(12)->setMinute(0)->setSecond(0);
 
+        TradieAvailability::create([
+            'tradie_id' => $tradieProfile->id,
+            'day_of_week' => $startsAt->dayOfWeek,
+            'start_time' => '00:00:00',
+            'end_time' => '23:59:59',
+            'is_available' => true,
+        ]);
+
         $response = $this->actingAs($customer, 'sanctum')
             ->postJson("/api/v1/service-requests/{$serviceRequest->id}/appointments", [
                 'starts_at' => $startsAt->toDateTimeString(),
@@ -189,6 +198,21 @@ class AppointmentAndJobLifecycleTest extends TestCase
         ]);
 
         // First appointment schedules successfully
+        TradieAvailability::create([
+            'tradie_id' => $tradieProfile->id,
+            'day_of_week' => now()->addDays(2)->dayOfWeek,
+            'start_time' => '00:00:00',
+            'end_time' => '23:59:59',
+            'is_available' => true,
+        ]);
+        TradieAvailability::create([
+            'tradie_id' => $tradieProfile->id,
+            'day_of_week' => now()->addDays(3)->dayOfWeek,
+            'start_time' => '00:00:00',
+            'end_time' => '23:59:59',
+            'is_available' => true,
+        ]);
+
         $res1 = $this->actingAs($customer, 'sanctum')
             ->postJson("/api/v1/service-requests/{$serviceRequest->id}/appointments", [
                 'starts_at' => now()->addDays(2)->toDateTimeString(),

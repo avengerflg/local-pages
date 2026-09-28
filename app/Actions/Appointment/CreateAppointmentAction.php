@@ -7,7 +7,10 @@ use App\Models\Appointment;
 use App\Models\Job;
 use App\Models\Quote;
 use App\Models\ServiceRequest;
+use App\Models\TradieProfile;
 use App\Models\User;
+use App\Services\ResolveTradieAvailabilityService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,12 +60,88 @@ class CreateAppointmentAction
 
             // Check if an appointment already exists
             $existingAppointment = Appointment::where('request_id', $serviceRequest->id)
-                ->whereIn('status', ['scheduled', 'rescheduled', 'completed'])
+                ->whereIn('status', ['scheduled', 'completed'])
                 ->exists();
 
             if ($existingAppointment) {
                 throw ValidationException::withMessages([
                     'appointment' => ['An appointment has already been scheduled for this service request.'],
+                ]);
+            }
+
+            // Lock TradieProfile for conflict prevention
+            $tradieProfile = TradieProfile::where('id', $acceptedQuote->tradie_id)
+                ->lockForUpdate()
+                ->first();
+
+            $requestedStart = Carbon::parse($data['starts_at']);
+            $requestedEnd = isset($data['ends_at']) ? Carbon::parse($data['ends_at']) : $requestedStart->copy();
+
+            // 1. Availability Resolution
+            $availabilityService = app(ResolveTradieAvailabilityService::class);
+            $availableBlocks = $availabilityService->execute($tradieProfile->id, $requestedStart);
+
+            if ($availableBlocks->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'starts_at' => ['The tradie is not available on this date.'],
+                ]);
+            }
+
+            $isAvailable = false;
+            foreach ($availableBlocks as $block) {
+                if ($requestedStart->greaterThanOrEqualTo($block['starts_at']) &&
+                    $requestedEnd->lessThanOrEqualTo($block['ends_at'])) {
+                    $isAvailable = true;
+                    break;
+                }
+            }
+
+            if (! $isAvailable) {
+                throw ValidationException::withMessages([
+                    'starts_at' => ['The requested appointment time falls outside the tradie\'s availability.'],
+                ]);
+            }
+
+            // 2. Active Overlap Detection
+            $activeAppointments = Appointment::where('tradie_id', $tradieProfile->id)
+                ->whereIn('status', ['scheduled'])
+                ->where(function ($query) use ($requestedStart, $requestedEnd) {
+                    $query->whereDate('starts_at', '<=', $requestedEnd->toDateString())
+                        ->whereRaw('DATE(COALESCE(ends_at, starts_at)) >= ?', [$requestedStart->toDateString()]);
+                })
+                ->get();
+
+            $hasConflict = false;
+            foreach ($activeAppointments as $apt) {
+                $aptStart = Carbon::parse($apt->starts_at);
+                $aptEnd = $apt->ends_at ? Carbon::parse($apt->ends_at) : $aptStart->copy();
+
+                if ($requestedStart->eq($requestedEnd) && $aptStart->eq($aptEnd)) {
+                    if ($requestedStart->eq($aptStart)) {
+                        $hasConflict = true;
+                    }
+                } elseif ($requestedStart->eq($requestedEnd)) {
+                    if ($requestedStart->greaterThanOrEqualTo($aptStart) && $requestedStart->lessThan($aptEnd)) {
+                        $hasConflict = true;
+                    }
+                } elseif ($aptStart->eq($aptEnd)) {
+                    if ($aptStart->greaterThanOrEqualTo($requestedStart) && $aptStart->lessThan($requestedEnd)) {
+                        $hasConflict = true;
+                    }
+                } else {
+                    if ($requestedStart->lessThan($aptEnd) && $aptStart->lessThan($requestedEnd)) {
+                        $hasConflict = true;
+                    }
+                }
+
+                if ($hasConflict) {
+                    break;
+                }
+            }
+
+            if ($hasConflict) {
+                throw ValidationException::withMessages([
+                    'starts_at' => ['The tradie is already booked during this time.'],
                 ]);
             }
 

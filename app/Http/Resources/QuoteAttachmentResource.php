@@ -24,7 +24,7 @@ class QuoteAttachmentResource extends JsonResource
             'download_url' => URL::temporarySignedRoute(
                 'files.download',
                 now()->addMinutes(60),
-                ['type' => 'quote_attachments', 'id' => $this->id]
+                ['type' => 'quote-attachment', 'id' => $this->id]
             ),
             'created_at' => $this->created_at?->toIso8601String(),
         ];

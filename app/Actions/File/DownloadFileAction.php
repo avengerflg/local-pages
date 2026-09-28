@@ -20,13 +20,13 @@ class DownloadFileAction
     public function execute(User $user, string $type, int $id): StreamedResponse
     {
         switch ($type) {
-            case 'tradie_documents':
+            case 'tradie-document':
                 return $this->downloadTradieDocument($user, $id);
-            case 'request_attachments':
+            case 'request-attachment':
                 return $this->downloadRequestAttachment($user, $id);
-            case 'message_attachments':
+            case 'chat-attachment':
                 return $this->downloadMessageAttachment($user, $id);
-            case 'quote_attachments':
+            case 'quote-attachment':
                 return $this->downloadQuoteAttachment($user, $id);
             default:
                 throw new NotFoundHttpException('Invalid file type.');
@@ -116,7 +116,7 @@ class DownloadFileAction
     protected function streamFile(string $path, string $name, string $mimeType, string $disk = 'local'): StreamedResponse
     {
         if (! Storage::disk($disk)->exists($path)) {
-            throw new NotFoundHttpException('File not found on storage.');
+            throw new NotFoundHttpException('File not found.');
         }
 
         return Storage::disk($disk)->response($path, $name, ['Content-Type' => $mimeType]);

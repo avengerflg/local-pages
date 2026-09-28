@@ -57,7 +57,7 @@ class Phase17Test extends TestCase
         ]);
 
         $url = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
-            'type' => 'tradie_documents',
+            'type' => 'tradie-document',
             'id' => $document->id,
         ]);
 
@@ -111,7 +111,7 @@ class Phase17Test extends TestCase
         ]);
 
         $url = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
-            'type' => 'request_attachments',
+            'type' => 'request-attachment',
             'id' => $attachment->id,
         ]);
 
@@ -160,7 +160,7 @@ class Phase17Test extends TestCase
         ]);
 
         $url = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
-            'type' => 'message_attachments',
+            'type' => 'chat-attachment',
             'id' => $attachment->id,
         ]);
 
@@ -200,7 +200,7 @@ class Phase17Test extends TestCase
         ]);
 
         $url = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
-            'type' => 'quote_attachments',
+            'type' => 'quote-attachment',
             'id' => $attachment->id,
         ]);
 
@@ -264,5 +264,50 @@ class Phase17Test extends TestCase
         $this->assertArrayNotHasKey('url', $response->json('data.attachments.0'));
         $this->assertArrayNotHasKey('file_path', $response->json('data.attachments.0'));
         $this->assertArrayNotHasKey('storage_path', $response->json('data.attachments.0'));
+    }
+
+    public function test_missing_and_spoofed_files_return_404(): void
+    {
+        // 1. Missing physical file but valid record -> 404
+        $document = TradieDocument::forceCreate([
+            'tradie_id' => $this->tradieProfile1->id,
+            'file_path' => 'tradie-documents/does-not-exist.pdf',
+            'document_type' => 'license',
+            'original_name' => 'license.pdf',
+            'mime_type' => 'application/pdf',
+            'file_size' => 100,
+            'status' => 'pending',
+        ]);
+
+        $url1 = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
+            'type' => 'tradie-document',
+            'id' => $document->id,
+        ]);
+
+        $this->actingAs($this->admin)->get($url1)->assertStatus(404);
+
+        // 2. Non-existent record ID -> 404
+        $url2 = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
+            'type' => 'tradie-document',
+            'id' => 999999,
+        ]);
+        $this->actingAs($this->admin)->get($url2)->assertStatus(404);
+
+        // 3. Spoofed Type (Valid ID from TradieDocument but passed as request-attachment)
+        $url3 = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
+            'type' => 'request-attachment',
+            'id' => $document->id,
+        ]);
+        $this->actingAs($this->admin)->get($url3)->assertStatus(404);
+
+        // 4. Unknown type -> 404
+        $url4 = URL::temporarySignedRoute('files.download', now()->addMinutes(60), [
+            'type' => 'unknown-type',
+            'id' => $document->id,
+        ]);
+        $this->actingAs($this->admin)->get($url4)->assertStatus(404);
+
+        // 5. Unauthorized User + Missing File -> 403 (Doesn't leak path)
+        $this->actingAs($this->customer)->getJson($url1)->assertStatus(403);
     }
 }

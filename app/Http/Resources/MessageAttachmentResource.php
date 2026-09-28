@@ -24,7 +24,7 @@ class MessageAttachmentResource extends JsonResource
             'download_url' => URL::temporarySignedRoute(
                 'files.download',
                 now()->addMinutes(60),
-                ['type' => 'message_attachments', 'id' => $this->id]
+                ['type' => 'chat-attachment', 'id' => $this->id]
             ),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
