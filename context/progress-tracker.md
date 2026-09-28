@@ -23,8 +23,8 @@ Local Pages / Tradies Services Marketplace
 | 11. Reviews & Ratings | COMPLETE |
 | 12. Notifications & Communication | COMPLETE |
 | 13. Admin panel | COMPLETE |
-| 14. Testing & Hardening | NOT STARTED |
-| 15. Security/performance/deployment | NOT STARTED |
+| 14. Testing & Hardening | COMPLETE |
+| 15. Security/performance/deployment | COMPLETE |
 
 ## Phase 1 checklist
 - [x] Inspect existing repository

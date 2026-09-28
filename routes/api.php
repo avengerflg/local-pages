@@ -11,8 +11,10 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\ConversationController;
+use App\Http\Controllers\Api\V1\CustomerProfileController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\JobController;
+use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\MatchingController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\QuoteController;
@@ -44,6 +46,9 @@ Route::get('/health', HealthCheckController::class);
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
 
+// Location discovery (Public)
+Route::get('/locations', [LocationController::class, 'index'])->middleware('throttle:60,1');
+
 // Authentication routes
 Route::prefix('auth')->group(function () {
     // Public routes with rate limiting
@@ -69,9 +74,17 @@ Route::prefix('auth')->group(function () {
 
 // Customer Service Requests, Matching, Quotes, Appointments & Reviews
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
+    // Phase 15: Customer Profile
+    Route::get('/customer/profile', [CustomerProfileController::class, 'show']);
+    Route::match(['put', 'patch'], '/customer/profile', [CustomerProfileController::class, 'update']);
+
     Route::get('/service-requests', [ServiceRequestController::class, 'index']);
     Route::post('/service-requests', [ServiceRequestController::class, 'store']);
     Route::get('/service-requests/{id}', [ServiceRequestController::class, 'show']);
+    Route::post('/service-requests/{id}/cancel', [ServiceRequestController::class, 'cancel']);
+
+    Route::get('/customer/appointments', [AppointmentController::class, 'index']);
+    Route::get('/customer/jobs', [JobController::class, 'index']);
 
     Route::get('/service-requests/{id}/matching-tradies', [MatchingController::class, 'matchingTradies']);
     Route::post('/service-requests/{id}/matching-tradies', [MatchingController::class, 'selectTradies']);
@@ -92,6 +105,9 @@ Route::middleware(['auth:sanctum', 'role:tradie'])->group(function () {
         // Leads
         Route::get('/leads', [TradieLeadController::class, 'index']);
         Route::get('/leads/{id}', [TradieLeadController::class, 'show']);
+
+        Route::get('/appointments', [AppointmentController::class, 'index']);
+        Route::get('/jobs', [JobController::class, 'index']);
 
         // Phase 14: Profile Self-Service
         Route::get('/profile', [TradieProfileController::class, 'show']);

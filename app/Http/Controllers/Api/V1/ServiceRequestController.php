@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\ServiceRequest\CancelServiceRequestAction;
 use App\Actions\ServiceRequest\CreateServiceRequestAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceRequest\CreateServiceRequestRequest;
@@ -13,6 +14,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ServiceRequestController extends Controller
 {
+    /**
+     * Cancel a service request.
+     */
+    public function cancel(Request $request, int $id, CancelServiceRequestAction $action): JsonResponse
+    {
+        $serviceRequest = $action->execute($request->user(), $id);
+
+        return (new ServiceRequestResource($serviceRequest))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     /**
      * List all service requests belonging to the authenticated customer.
      */

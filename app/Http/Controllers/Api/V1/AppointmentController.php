@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Appointment\CreateAppointmentAction;
 use App\Actions\Appointment\GetAppointmentDetailAction;
+use App\Actions\Appointment\GetAppointmentsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\CreateAppointmentRequest;
 use App\Http\Resources\AppointmentResource;
@@ -13,6 +14,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AppointmentController extends Controller
 {
+    /**
+     * Display a listing of appointments for the authenticated user.
+     */
+    public function index(Request $request, GetAppointmentsAction $action): JsonResponse
+    {
+        $appointments = $action->execute($request->user(), $request->integer('per_page', 15));
+
+        return AppointmentResource::collection($appointments)
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
     /**
      * Schedule an appointment for a service request with an accepted quote.
      */
