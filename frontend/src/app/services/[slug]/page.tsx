@@ -8,17 +8,17 @@ import Link from 'next/link';
 export default function ServiceDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const { data: service, isLoading, error } = useService(slug);
+  const { data: service, isLoading, isError } = useService(slug);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <PublicHeader />
       <main className="flex-grow mx-auto max-w-3xl px-6 py-12 lg:px-8 w-full">
-        {isLoading && <div className="text-center py-12 text-gray-500">Loading service details...</div>}
-        {error && <div className="text-center py-12 text-red-500">Failed to load service details.</div>}
+        {isLoading && <div data-testid="service-loading" className="text-center py-12 text-gray-500">Loading service details...</div>}
+        {isError && <div data-testid="service-error" className="text-center py-12 text-red-500">Service not found or failed to load.</div>}
         
-        {!isLoading && !error && service && (
-          <div className="bg-white shadow rounded-lg p-8">
+        {!isLoading && !isError && service && (
+          <div data-testid="service-detail" className="bg-white shadow rounded-lg p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{service.name}</h1>
             {service.description && <p className="text-gray-700 mb-8">{service.description}</p>}
             
@@ -33,6 +33,9 @@ export default function ServiceDetailPage() {
                         {q.required && <span className="ml-2 text-red-500 text-sm">* required</span>}
                       </div>
                       <div className="text-sm text-gray-500 mt-1 capitalize">Type: {q.question_type}</div>
+                      {q.conditional_rule && (
+                        <div className="text-sm text-yellow-600 mt-1">Note: Shows only if ({q.conditional_rule})</div>
+                      )}
                       {q.options && q.options.length > 0 && (
                         <div className="mt-2 text-sm text-gray-600">
                           Options: {q.options.map(o => o.option_text).join(', ')}

@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types/api';
 import { api } from '../lib/api-client';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -20,6 +21,7 @@ export const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -57,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {} finally {
       localStorage.removeItem('auth_token');
       setUser(null);
-      window.location.assign('/');
+      router.push('/');
     }
   };
 
