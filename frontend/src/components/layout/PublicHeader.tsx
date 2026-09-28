@@ -7,7 +7,7 @@ export const PublicHeader = () => {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <img 
-              src="/logo.jpg" 
+              src="/logo.jpeg" 
               alt="Local Pages - Certified Local Trades and Services" 
               className="h-12 md:h-14 w-auto object-contain"
             />
