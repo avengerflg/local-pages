@@ -82,7 +82,7 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::match(['put', 'patch'], '/customer/profile', [CustomerProfileController::class, 'update']);
 
     Route::get('/service-requests', [ServiceRequestController::class, 'index']);
-    Route::post('/service-requests', [ServiceRequestController::class, 'store']);
+    Route::post('/service-requests', [ServiceRequestController::class, 'store'])->middleware('throttle:10,1');
     Route::get('/service-requests/{id}', [ServiceRequestController::class, 'show']);
     Route::post('/service-requests/{id}/cancel', [ServiceRequestController::class, 'cancel']);
 
@@ -158,7 +158,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations', [ConversationController::class, 'store']);
     Route::get('/conversations/{id}', [ConversationController::class, 'show']);
     Route::get('/conversations/{id}/messages', [ConversationController::class, 'messages']);
-    Route::post('/conversations/{id}/messages', [ConversationController::class, 'sendMessage']);
+    Route::post('/conversations/{id}/messages', [ConversationController::class, 'sendMessage'])->middleware('throttle:30,1');
 
     Route::get('/quotes/{id}', [QuoteController::class, 'show']);
 
@@ -226,7 +226,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 // Phase 17: Secure File Access
 Route::middleware(['auth:sanctum', 'signed'])->group(function () {
-    Route::get('/files/{type}/{id}', [FileDownloadController::class, 'download'])->name('files.download');
+    Route::get('/files/{type}/{id}', [FileDownloadController::class, 'download'])->name('files.download')->middleware('throttle:30,1');
 });
 
 // Phase 12: In-app notification inbox (authenticated, any role).
