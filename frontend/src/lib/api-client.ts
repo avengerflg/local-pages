@@ -39,7 +39,7 @@ class ApiClient {
         let errorData: ApiError = { message: 'An unexpected error occurred' };
         try {
           errorData = await response.json();
-        } catch (e) {
+        } catch {
           // non json error
         }
 
@@ -52,8 +52,8 @@ class ApiClient {
 
       if (response.status === 204) return {} as T;
       return await response.json() as T;
-    } catch (error: any) {
-      if (error.status) throw error;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'status' in error) throw error;
       throw { status: 0, data: { message: 'Network failure' } };
     }
   }
@@ -62,12 +62,12 @@ class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
-  post<T>(endpoint: string, data?: any, options?: RequestInit) {
+  post<T>(endpoint: string, data?: unknown, options?: RequestInit) {
     const body = data instanceof FormData ? data : JSON.stringify(data);
     return this.request<T>(endpoint, { ...options, method: 'POST', body });
   }
 
-  put<T>(endpoint: string, data?: any, options?: RequestInit) {
+  put<T>(endpoint: string, data?: unknown, options?: RequestInit) {
     return this.request<T>(endpoint, { ...options, method: 'PUT', body: JSON.stringify(data) });
   }
 

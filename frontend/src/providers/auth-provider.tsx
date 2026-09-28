@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const res = await api.get<{data: User}>('/auth/me');
           setUser(res.data);
-        } catch (err) {
+        } catch {
           localStorage.removeItem('auth_token');
         }
       }
@@ -54,10 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await api.post('/auth/logout');
-    } catch (e) {} finally {
+    } catch {} finally {
       localStorage.removeItem('auth_token');
       setUser(null);
-      window.location.href = '/';
+      window.location.assign('/');
     }
   };
 

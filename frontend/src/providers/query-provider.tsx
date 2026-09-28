@@ -10,9 +10,10 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1 minute
-            retry: (failureCount, error: any) => {
+            retry: (failureCount: number, error: unknown) => {
+              const apiError = error as { status?: number };
               // Do not aggressively retry auth or validation errors
-              if (error?.status && [401, 403, 404, 422].includes(error.status)) {
+              if (apiError?.status && [401, 403, 404, 422].includes(apiError.status)) {
                 return false;
               }
               return failureCount < 2;
