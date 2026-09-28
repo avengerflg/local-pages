@@ -34,10 +34,13 @@ export function PublicHeader() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
           {user ? (
-            <button onClick={logout} className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600">Log out</button>
+            <>
+              {user.role === 'customer' && <Link href="/customer" className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 my-auto">Account</Link>}
+              <button onClick={logout} className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 my-auto">Log out</button>
+            </>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600">Log in</Link>
+              <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 my-auto">Log in</Link>
               <Link href="/register" className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Get Started</Link>
             </>
           )}
@@ -64,7 +67,10 @@ export function PublicHeader() {
                 </div>
                 <div className="py-6">
                   {user ? (
-                    <button onClick={logout} className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log out</button>
+                    <>
+                      {user.role === 'customer' && <Link href="/customer" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Account</Link>}
+                      <button onClick={logout} className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 w-full text-left">Log out</button>
+                    </>
                   ) : (
                     <>
                       <Link href="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</Link>
