@@ -44,7 +44,7 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
       fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
       fireEvent.click(screen.getByRole('button', { name: /Log In/i }));
 
@@ -68,7 +68,7 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
       fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
       fireEvent.click(screen.getByRole('button', { name: /Log In/i }));
 
@@ -137,7 +137,7 @@ describe('Auth Workflows', () => {
       (authApi.forgotPassword as jest.Mock).mockResolvedValueOnce({ message: 'Sent' });
 
       render(<ForgotPasswordPage />);
-      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
       fireEvent.click(screen.getByRole('button', { name: /Send Reset Link/i }));
 
       await waitFor(() => {

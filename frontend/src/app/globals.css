@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F7F9FC;
+  --foreground: #061A33;
+  
+  --color-primary-navy: #061A33;
+  --color-secondary-navy: #0B2342;
+  --color-primary-pink: #F50067;
+  --color-hover-pink: #d40058;
+  --color-light-bg: #F7F9FC;
+  --color-muted-text: #718096;
+  --color-border-light: #E8EDF3;
 }
 
 @theme inline {
@@ -10,17 +18,25 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --color-brand-navy: var(--color-primary-navy);
+  --color-brand-navy-light: var(--color-secondary-navy);
+  --color-brand-pink: var(--color-primary-pink);
+  --color-brand-pink-hover: var(--color-hover-pink);
+  --color-brand-muted: var(--color-muted-text);
+  --color-brand-border: var(--color-border-light);
+  --color-brand-light: var(--color-light-bg);
 }
 
 @media (prefers-color-scheme: dark) {
+  /* We maintain a bright design for the public homepage per the reference */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #F7F9FC;
+    --foreground: #061A33;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
