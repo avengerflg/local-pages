@@ -1,0 +1,31 @@
+<IfModule mod_rewrite.c>
+    Options -Indexes -MultiViews
+    RewriteEngine On
+    RewriteBase /local-pages/
+    DirectoryIndex index.html index.php
+
+    # 1. API routes -> pass to Laravel public/ directory
+    RewriteRule ^api/(.*)$ public/index.php [L,QSA]
+
+    # 2. Existing files -> serve directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # 3. Subdirectories with index.html (e.g. /login/ -> login/index.html)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_FILENAME}/index.html -f
+    RewriteRule ^(.+)/?$ $1/index.html [L]
+
+    # 4. Clean URLs for Next.js static pages (e.g. /login -> /login.html)
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.+)$ $1.html [L]
+
+    # 5. Root request fallback to index.html
+    RewriteRule ^$ index.html [L]
+
+    # 6. SPA Fallback for client-side routing
+    RewriteCond %{REQUEST_URI} !^/local-pages/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>

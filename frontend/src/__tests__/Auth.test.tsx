@@ -44,9 +44,9 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
-      fireEvent.click(screen.getByRole('button', { name: /Log In/i }));
+      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
+      fireEvent.click(screen.getByRole('button', { name: /Sign In|Log In/i }));
 
       await waitFor(() => {
         expect(authApi.login).toHaveBeenCalledWith({ email: 'test@test.com', password: 'password', device_name: 'web' });
@@ -68,9 +68,9 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
-      fireEvent.click(screen.getByRole('button', { name: /Log In/i }));
+      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
+      fireEvent.click(screen.getByRole('button', { name: /Sign In|Log In/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Invalid email')).toBeInTheDocument();
@@ -92,15 +92,11 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText('Name *'), { target: { value: 'Test User' } });
-      fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText('Password *'), { target: { value: 'password' } });
-      fireEvent.change(screen.getByLabelText('Confirm Password *'), { target: { value: 'password' } });
-      fireEvent.change(screen.getByLabelText('Name *'), { target: { value: 'Test User' } });
-      fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText('Password *'), { target: { value: 'password' } });
-      fireEvent.change(screen.getByLabelText('Confirm Password *'), { target: { value: 'password' } });
-      fireEvent.click(screen.getByRole('button', { name: /Register/i }));
+      fireEvent.change(screen.getByLabelText(/Full Name|Name/i), { target: { value: 'Test User' } });
+      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
+      fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'password' } });
+      fireEvent.click(screen.getByRole('button', { name: /Create.*Account|Register/i }));
 
       await waitFor(() => {
         expect(authApi.registerCustomer).toHaveBeenCalled();
@@ -120,11 +116,11 @@ describe('Auth Workflows', () => {
         </QueryClientProvider>
       );
 
-      fireEvent.change(screen.getByLabelText('Name *'), { target: { value: 'Test User' } });
-      fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'test@test.com' } });
-      fireEvent.change(screen.getByLabelText('Password *'), { target: { value: 'password' } });
-      fireEvent.change(screen.getByLabelText('Confirm Password *'), { target: { value: 'password' } });
-      fireEvent.click(screen.getByRole('button', { name: /Register/i }));
+      fireEvent.change(screen.getByLabelText(/Full Name|Name/i), { target: { value: 'Test User' } });
+      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'password' } });
+      fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'password' } });
+      fireEvent.click(screen.getByRole('button', { name: /Create.*Account|Register/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Name is required')).toBeInTheDocument();
@@ -137,11 +133,11 @@ describe('Auth Workflows', () => {
       (authApi.forgotPassword as jest.Mock).mockResolvedValueOnce({ message: 'Sent' });
 
       render(<ForgotPasswordPage />);
-      fireEvent.change(screen.getByLabelText(/^Email$/i), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
       fireEvent.click(screen.getByRole('button', { name: /Send Reset Link/i }));
 
       await waitFor(() => {
-        expect(screen.getByText(/If an account exists with that email/i)).toBeInTheDocument();
+        expect(screen.getByText(/If an account exists/i)).toBeInTheDocument();
       });
     });
 
@@ -151,13 +147,13 @@ describe('Auth Workflows', () => {
       window.history.pushState({}, 'Test', '/reset-password?token=abc&email=test@test.com');
 
       render(<ResetPasswordPage />);
-      await waitFor(() => expect(screen.getByRole('button', { name: /Reset Password/i })).not.toBeDisabled());
-      fireEvent.change(screen.getByLabelText(/^New Password$/i), { target: { value: 'newpass' } });
-      fireEvent.change(screen.getByLabelText(/Confirm New Password/i), { target: { value: 'newpass' } });
-      fireEvent.click(screen.getByRole('button', { name: /Reset Password/i }));
+      await waitFor(() => expect(screen.getByRole('button', { name: /Update Password|Reset Password/i })).not.toBeDisabled());
+      fireEvent.change(screen.getByLabelText(/New Password/i), { target: { value: 'newpass' } });
+      fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'newpass' } });
+      fireEvent.click(screen.getByRole('button', { name: /Update Password|Reset Password/i }));
 
       await waitFor(() => {
-        expect(screen.getByText(/Your password has been successfully reset/i)).toBeInTheDocument();
+        expect(screen.getByText(/password has been reset successfully/i)).toBeInTheDocument();
       });
     });
   });

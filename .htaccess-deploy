@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Frontend routing
+RewriteCond %{HTTP_HOST} ^local-pages\.webzee\.com\.au$ [NC]
+RewriteCond %{REQUEST_URI} !^/frontend/out/
+RewriteRule ^(.*)$ frontend/out/$1 [L]
+
+# Backend (API) routing
+RewriteCond %{HTTP_HOST} ^api-local-pages\.webzee\.com\.au$ [NC]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

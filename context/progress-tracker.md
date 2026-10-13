@@ -4,27 +4,51 @@
 Local Pages / Tradies Services Marketplace
 
 ## Current phase
-**Phase 13 — Admin Management & Platform Operations (COMPLETE)**
+**Phase F-Stab — Frontend Stabilization & Regression Repair (COMPLETE)**
 
 ## Overall status
 
-| Phase | Status |
-|---|---|
-| 1. Laravel project setup | COMPLETE |
-| 2. Database migrations | COMPLETE |
-| 3. Models + relationships | COMPLETE |
-| 4. Authentication | COMPLETE |
-| 5. Customer service requests | COMPLETE |
-| 6. Tradie matching & selection | COMPLETE |
-| 7. Tradie lead dashboard & management | COMPLETE |
-| 8. Customer ↔ tradie platform chat | COMPLETE |
-| 9. Quotations / Quote management | COMPLETE |
-| 10. Appointments & Job lifecycle foundation | COMPLETE |
-| 11. Reviews & Ratings | COMPLETE |
-| 12. Notifications & Communication | COMPLETE |
-| 13. Admin panel | COMPLETE |
-| 14. Testing & Hardening | COMPLETE |
-| 15. Security/performance/deployment | COMPLETE |
+### Backend (Laravel API)
+| Phase | Status | Notes |
+|---|---|---|
+| 1. Laravel project setup | COMPLETE | Verified |
+| 2. Database migrations | COMPLETE | 29 migrations verified |
+| 3. Models + relationships | COMPLETE | 26 models verified |
+| 4. Authentication | COMPLETE | Sanctum token auth |
+| 5. Customer service requests | COMPLETE | Backend endpoints verified |
+| 6. Tradie matching & selection | COMPLETE | Matching engine verified |
+| 7. Tradie lead management | COMPLETE | Lead lifecycle verified |
+| 8. Customer ↔ tradie chat | COMPLETE | Conversations & messages |
+| 9. Quotations management | COMPLETE | Quotes API verified |
+| 10. Appointments & Job lifecycle | COMPLETE | Appointments & jobs |
+| 11. Reviews & Ratings | COMPLETE | Moderated reviews |
+| 12. Notifications & Communication | COMPLETE | Notification inbox |
+| 13. Admin panel | COMPLETE | Platform ops & catalogs |
+| 14. Tradie self-service onboarding | COMPLETE | Profile, services, areas, docs, availability |
+| 15. Customer profile management | COMPLETE | Profile get/update |
+| 16. Job execution lifecycle | COMPLETE | Start, complete, cancel |
+| 17. Review reporting & moderation | COMPLETE | Reports and resolution |
+| 18. File storage & downloads | COMPLETE | Controlled file streaming |
+| 19. Availability-aware matching | COMPLETE | Blackout & schedule filtering |
+| 20. Quote acceptance & decline | COMPLETE | Accept/reject lifecycle |
+| 21. Hardening & concurrency audit | COMPLETE | 262 tests, 1,128 assertions passing |
+
+### Frontend (Next.js Application)
+| Phase | Status | Notes |
+|---|---|---|
+| F1. Setup & Design system | COMPLETE | Tailwind CSS, Lucide, brand system |
+| F2. Authentication pages | COMPLETE | Login, register, forgot/reset password |
+| F3. Public discovery pages | COMPLETE | Services directory, location search, about, contact |
+| F4. Homepage visual redesign | COMPLETE | Emergency trade cards, top trades, business CTA |
+| F-Stab. Frontend stabilization | COMPLETE | ESLint 0 errors/0 warnings, 5/5 Jest suites green, API contracts aligned, /unauthorized page, production build verified |
+| F5. Customer service request intake | NOT STARTED | Intake questionnaire & submission |
+| F6. Tradie matching UI | NOT STARTED | Match results & tradie selection |
+| F7. Quote comparison UI | NOT STARTED | Quote review, acceptance & rejection |
+| F8. Appointment booking UI | NOT STARTED | Scheduling tradie appointments |
+| F9. Customer ↔ tradie chat UI | NOT STARTED | Real-time messaging |
+| F10. Review submission UI | NOT STARTED | Completed job reviews |
+| F11. Tradie portal | NOT STARTED | Tradie lead dashboard, quote creation |
+| F12. Admin portal | NOT STARTED | Platform administration console |
 
 ## Phase 1 checklist
 - [x] Inspect existing repository
@@ -275,6 +299,21 @@ Local Pages / Tradies Services Marketplace
 - [x] Run Laravel Pint code style verification (passed)
 - [x] Document onboarding architecture in `context/tradie-onboarding-context.md`
 - [x] Complete Phase 14
+
+## Phase F-Stab checklist (Frontend Stabilization & Regression Repair)
+- [x] Protect existing working tree, deployment `.htaccess` files, and reference-inspired homepage design
+- [x] Resolve all ESLint violations (0 errors, 0 warnings across all files)
+- [x] Fix React static-components/hooks violation in `customer/layout.tsx`
+- [x] Align customer API types and UI bindings with Laravel `JobResource` & `AppointmentResource`
+- [x] Create accessible `frontend/src/app/unauthorized/page.tsx` for RoleGuard redirects (HTTP 403)
+- [x] Correct unsupported marketing claims (18,400+ reviews, 8,500+ businesses, SMS notifications, fake ratings)
+- [x] Sanitize placeholder links (/terms, /privacy, /cookies) and mark demonstration UI forms clearly
+- [x] Repair Jest frontend test suite (5 suites passed, 16 tests passed, 0 failures)
+- [x] Add customer API resource mapping unit tests (`CustomerApi.test.ts`)
+- [x] Verify production Next.js build (`npm run build` generates 25/25 static pages cleanly)
+- [x] Verify backend regression suite (`php artisan test`: 262 passed, 1,128 assertions; `./vendor/bin/pint --test`: passed)
+- [x] Verify zero Laravel files modified during stabilization
+- [x] Complete Phase F-Stab
 
 ## Rules for updating this file
 The AI agent must update this tracker after each completed phase.

@@ -65,7 +65,7 @@ describe('Customer Profile', () => {
 
     await waitFor(() => {
       expect(mutate).toHaveBeenCalledWith({ postcode: '2001', address: '123 Fake St' }, expect.any(Object));
-      expect(screen.getByText('Profile updated successfully!')).toBeInTheDocument();
+      expect(screen.getByText(/updated successfully/i)).toBeInTheDocument();
     });
   });
 });

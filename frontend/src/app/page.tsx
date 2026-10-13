@@ -1,12 +1,11 @@
 import { Hero } from '@/components/home/Hero';
+import { EmergencyTradeCards } from '@/components/home/EmergencyTradeCards';
+import { TradeSearch } from '@/components/home/TradeSearch';
 import { PopularJobs } from '@/components/home/PopularJobs';
-import { PlanningCTA } from '@/components/home/PlanningCTA';
 import { HowItWorks } from '@/components/home/HowItWorks';
-import { BusinessCTA } from '@/components/home/BusinessCTA';
 import { TrustFeatures } from '@/components/home/TrustFeatures';
-import { FeaturedArticle } from '@/components/home/FeaturedArticle';
 import { LocationCategories } from '@/components/home/LocationCategories';
-import { PartnerStrip } from '@/components/home/PartnerStrip';
+import { BusinessCTA } from '@/components/home/BusinessCTA';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { UtilityBar } from '@/components/layout/UtilityBar';
@@ -23,14 +22,13 @@ export default function HomePage() {
       <PublicHeader />
       <main className="flex-grow">
         <Hero />
-        <PopularJobs />
-        <PlanningCTA />
-        <HowItWorks />
-        <BusinessCTA />
+        <EmergencyTradeCards />
+        <TradeSearch />
         <TrustFeatures />
-        <FeaturedArticle />
+        <HowItWorks />
+        <PopularJobs />
         <LocationCategories />
-        <PartnerStrip />
+        <BusinessCTA />
       </main>
       <PublicFooter />
     </div>

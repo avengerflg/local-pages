@@ -1,146 +1,179 @@
 import Link from 'next/link';
+import { 
+  Droplet, Zap, Hammer, TreeDeciduous, 
+  ShieldCheck, Wind, Home, PenTool, 
+  Paintbrush, Grid, Sparkles, Truck,
+  ArrowUpRight, ChevronRight
+} from 'lucide-react';
+
+const categories = [
+  { 
+    name: 'Plumbing & Gas', 
+    slug: 'plumber',
+    icon: Droplet, 
+    color: 'from-blue-500/10 to-cyan-500/10 text-blue-600',
+    pros: '1,420+ Pros',
+    popularJobs: 'Hot water, blocked drains, gas leaks'
+  },
+  { 
+    name: 'Electrical Services', 
+    slug: 'electrician',
+    icon: Zap, 
+    color: 'from-amber-500/10 to-yellow-500/10 text-amber-600',
+    pros: '1,280+ Pros',
+    popularJobs: 'Safety switches, switchboards, EV chargers'
+  },
+  { 
+    name: 'Air Conditioning & Heating', 
+    slug: 'air-conditioning',
+    icon: Wind, 
+    color: 'from-cyan-500/10 to-sky-500/10 text-cyan-600',
+    pros: '940+ Pros',
+    popularJobs: 'Ducted systems, split installs, servicing'
+  },
+  { 
+    name: 'Roofing & Guttering', 
+    slug: 'roofing',
+    icon: Home, 
+    color: 'from-rose-500/10 to-red-500/10 text-rose-600',
+    pros: '810+ Pros',
+    popularJobs: 'Leak repairs, restorations, gutter guard'
+  },
+  { 
+    name: 'Carpentry & Joinery', 
+    slug: 'carpenter',
+    icon: PenTool, 
+    color: 'from-orange-500/10 to-amber-500/10 text-orange-600',
+    pros: '730+ Pros',
+    popularJobs: 'Decks, pergolas, framing, custom shelving'
+  },
+  { 
+    name: 'Painting & Decorating', 
+    slug: 'painter',
+    icon: Paintbrush, 
+    color: 'from-purple-500/10 to-pink-500/10 text-purple-600',
+    pros: '1,150+ Pros',
+    popularJobs: 'Interior, exterior, feature walls, spray paint'
+  },
+  { 
+    name: 'Landscaping & Gardening', 
+    slug: 'landscaper',
+    icon: TreeDeciduous, 
+    color: 'from-emerald-500/10 to-green-500/10 text-emerald-600',
+    pros: '690+ Pros',
+    popularJobs: 'Paving, turf, retaining walls, garden maintenance'
+  },
+  { 
+    name: 'Handyman & Home Repairs', 
+    slug: 'handyman',
+    icon: Hammer, 
+    color: 'from-slate-500/10 to-gray-500/10 text-slate-700',
+    pros: '1,560+ Pros',
+    popularJobs: 'Doors, plaster repairs, assembly, general odd jobs'
+  },
+  { 
+    name: 'Tiling & Waterproofing', 
+    slug: 'tiler',
+    icon: Grid, 
+    color: 'from-indigo-500/10 to-blue-500/10 text-indigo-600',
+    pros: '540+ Pros',
+    popularJobs: 'Bathrooms, splashbacks, balcony tiling'
+  },
+  { 
+    name: 'House & Commercial Cleaning', 
+    slug: 'cleaner',
+    icon: Sparkles, 
+    color: 'from-teal-500/10 to-emerald-500/10 text-teal-600',
+    pros: '1,890+ Pros',
+    popularJobs: 'Bond cleaning, deep clean, pressure washing'
+  },
+  { 
+    name: 'Fencing & Gates', 
+    slug: 'fencing',
+    icon: ShieldCheck, 
+    color: 'from-amber-500/10 to-rose-500/10 text-amber-700',
+    pros: '620+ Pros',
+    popularJobs: 'Colorbond, timber paling, pool glass fences'
+  },
+  { 
+    name: 'Rubbish & Waste Removal', 
+    slug: 'rubbish-removal',
+    icon: Truck, 
+    color: 'from-red-500/10 to-orange-500/10 text-red-600',
+    pros: '780+ Pros',
+    popularJobs: 'Deceased estate, green waste, site cleanups'
+  },
+];
 
 export const PopularJobs = () => {
-  const categories = [
-    { 
-      name: 'Handymen', 
-      active: true,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7.5v9l-8 4.5-8-4.5v-9l8-4.5 8 4.5z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-9" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 7.5l8 4.5 8-4.5" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Electricians', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5L18.5 8v8l-6.5 3.5L5.5 16V8L12 4.5z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Plumbers', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-          {/* Quick wrench approximation */}
-          <path strokeLinecap="round" strokeLinejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Fencers', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <rect x="5" y="4" width="2" height="16" rx="1" />
-          <rect x="11" y="4" width="2" height="16" rx="1" />
-          <rect x="17" y="4" width="2" height="16" rx="1" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h18" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Concreters', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 12h16M4 16h16" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 8c1.5 1.5 3.5 1.5 5 0s3.5-1.5 5 0 3.5 1.5 5 0" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12c1.5-1.5 3.5-1.5 5 0s3.5 1.5 5 0 3.5-1.5 5 0" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 16c1.5 1.5 3.5 1.5 5 0s3.5-1.5 5 0 3.5 1.5 5 0" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Gardeners', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V5" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 14c-3 0-5-2-5-5s2-5 5-5" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 14c3 0 5-2 5-5s-2-5-5-5" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18c-2 0-4-1-4-3s1-3 4-3" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18c2 0 4-1 4-3s-1-3-4-3" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Painters', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7 6h10v4H7z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-7v4h-2v-4a2 2 0 0 1 2-2h4" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v3" />
-        </svg>
-      )
-    },
-    { 
-      name: 'Tilers', 
-      active: false,
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <rect x="4" y="4" width="16" height="16" rx="1" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16M4 12h16" />
-        </svg>
-      )
-    }
-  ];
-
   return (
-    <section className="bg-white py-20 pb-24 border-b border-gray-100">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-b from-white to-[#F8FAFC] py-20 lg:py-28 relative">
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
         
-        <div className="text-center mb-12">
-          <h2 className="text-[36px] font-extrabold tracking-tight text-[#0B1524] mb-3">Most popular jobs</h2>
-          <p className="text-[17px] text-[#6B7280]">Browse top categories and find trusted local experts.</p>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 lg:mb-16 gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-pink/10 text-brand-pink text-xs font-bold uppercase tracking-wider mb-3">
+              Comprehensive Trade Directory
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-navy leading-tight">
+              Popular Trade <span className="text-brand-pink">Categories</span>
+            </h2>
+            <p className="mt-2 text-slate-600 text-base max-w-xl">
+              Browse licensed and verified professionals across Australia’s most in-demand home and commercial trades.
+            </p>
+          </div>
+
+          <Link 
+            href="/services" 
+            className="inline-flex items-center gap-2 text-brand-pink font-bold text-sm sm:text-base hover:text-brand-pink-dark transition-colors group shrink-0"
+          >
+            <span>View All Categories</span>
+            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
         
-        {/* Categories Grid/Row */}
-        <div className="flex justify-start xl:justify-center overflow-x-auto pb-6 gap-5 hide-scrollbar px-2 snap-x">
-          {categories.map((cat) => (
-            <Link 
-              key={cat.name} 
-              href={`/services?type=${cat.name.toLowerCase()}`} 
-              className={`snap-start shrink-0 flex flex-col items-center justify-center w-[130px] h-[130px] rounded-2xl transition-all
-                ${cat.active 
-                  ? 'border-2 border-brand-pink shadow-[0_4px_24px_rgba(245,0,103,0.18)] bg-white z-10' 
-                  : 'border border-gray-200 hover:border-gray-300 bg-white shadow-sm'
-                }
-              `}
-            >
-              <div className={`mb-3 flex items-center justify-center ${cat.active ? 'text-brand-pink' : 'text-[#1E293B]'}`}>
-                {cat.icon}
-              </div>
-              <span className={`text-[13px] font-bold ${cat.active ? 'text-brand-pink' : 'text-[#1E293B]'}`}>
-                {cat.name}
-              </span>
-            </Link>
-          ))}
-        </div>
-        
-        {/* Popular Tags */}
-        <div className="mt-8 flex items-center justify-center flex-wrap gap-2.5 text-sm">
-          <span className="text-[#061A33] font-extrabold text-[13px] mr-1">Popular in Handymen:</span>
-          {['Basic Bricklaying', 'Basic Carpentry', 'Basic Concreting', 'Furniture Assembly', 'Odd Jobs'].map((tag) => (
-            <Link 
-              key={tag} 
-              href={`/services?search=${encodeURIComponent(tag)}`}
-              className="px-4 py-1.5 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] hover:text-[#475569] rounded-full text-[12px] font-semibold transition-colors"
-            >
-              {tag}
-            </Link>
-          ))}
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {categories.map((cat, idx) => {
+            const Icon = cat.icon;
+            return (
+              <Link 
+                key={idx} 
+                href={`/services?category=${cat.slug}`}
+                className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-[0_12px_32px_rgba(4,19,41,0.08)] hover:border-brand-pink/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm`}>
+                      <Icon className="w-6 h-6" strokeWidth={2.2} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-500 bg-slate-100 group-hover:bg-brand-pink/10 group-hover:text-brand-pink px-2.5 py-1 rounded-full transition-colors">
+                      {cat.pros}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading font-bold text-lg text-brand-navy group-hover:text-brand-pink transition-colors mb-1.5 flex items-center justify-between">
+                    <span>{cat.name}</span>
+                    <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-brand-pink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  </h3>
+                  
+                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    {cat.popularJobs}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-blue group-hover:text-brand-pink transition-colors">
+                  <span>Browse local tradies</span>
+                  <span className="font-bold">→</span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
         
       </div>
     </section>
   );
 };
+

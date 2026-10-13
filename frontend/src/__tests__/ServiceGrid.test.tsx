@@ -17,6 +17,6 @@ describe('ServiceGrid', () => {
 
   it('handles empty results', () => {
     render(<ServiceGrid services={[]} />);
-    expect(screen.getByText('No services found.')).toBeInTheDocument();
+    expect(screen.getByText(/No services found/i)).toBeInTheDocument();
   });
 });

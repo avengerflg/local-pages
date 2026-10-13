@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCustomerProfile, updateCustomerProfile } from '@/services/customer-api';
+import { getCustomerProfile, updateCustomerProfile, getCustomerJobs, getCustomerAppointments } from '@/services/customer-api';
 
 export const useCustomerProfile = () => {
   return useQuery({
@@ -16,5 +16,19 @@ export const useUpdateCustomerProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customerProfile'] });
     },
+  });
+};
+
+export const useCustomerJobs = () => {
+  return useQuery({
+    queryKey: ['customerJobs'],
+    queryFn: getCustomerJobs,
+  });
+};
+
+export const useCustomerAppointments = () => {
+  return useQuery({
+    queryKey: ['customerAppointments'],
+    queryFn: getCustomerAppointments,
   });
 };

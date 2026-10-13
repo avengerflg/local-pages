@@ -1,0 +1,6 @@
+frontend/
+frontend-out.zip
+.git/
+node_modules/
+vendor/
+.env

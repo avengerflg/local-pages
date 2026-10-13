@@ -1,42 +1,92 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F7F9FC;
-  --foreground: #061A33;
+  --background: #FFFFFF;
+  --foreground: #12213A;
   
-  --color-primary-navy: #061A33;
-  --color-secondary-navy: #0B2342;
-  --color-primary-pink: #F50067;
-  --color-hover-pink: #d40058;
-  --color-light-bg: #F7F9FC;
-  --color-muted-text: #718096;
-  --color-border-light: #E8EDF3;
+  --color-primary-navy: #071B3A;
+  --color-dark-navy: #041329;
+  --color-secondary-navy: #0B2A52;
+  
+  --color-primary-pink: #F52B68;
+  --color-bright-pink: #FF2F70;
+  --color-pink-dark: #D91F58;
+  
+  --color-off-white: #F7F9FC;
+  --color-light-blue: #EEF5FC;
+  
+  --color-text-dark: #12213A;
+  --color-text-secondary: #5D6B7E;
+  
+  --color-border-light: #DDE4ED;
+  
+  --color-success: #38A852;
+  --color-warning: #F7941D;
+  --color-purple: #7651C8;
+  --color-blue: #1769C2;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-heading: var(--font-heading), "Outfit", system-ui, -apple-system, sans-serif;
   
   --color-brand-navy: var(--color-primary-navy);
-  --color-brand-navy-light: var(--color-secondary-navy);
+  --color-brand-navy-dark: var(--color-dark-navy);
+  --color-brand-navy-secondary: var(--color-secondary-navy);
+  
   --color-brand-pink: var(--color-primary-pink);
-  --color-brand-pink-hover: var(--color-hover-pink);
-  --color-brand-muted: var(--color-muted-text);
+  --color-brand-pink-bright: var(--color-bright-pink);
+  --color-brand-pink-dark: var(--color-pink-dark);
+  
+  --color-brand-off-white: var(--color-off-white);
+  --color-brand-light-blue: var(--color-light-blue);
+  
+  --color-brand-text: var(--color-text-dark);
+  --color-brand-text-muted: var(--color-text-secondary);
+  
   --color-brand-border: var(--color-border-light);
-  --color-brand-light: var(--color-light-bg);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* We maintain a bright design for the public homepage per the reference */
-  :root {
-    --background: #F7F9FC;
-    --foreground: #061A33;
-  }
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
 }
+
+
+h1, h2, h3, .font-heading {
+  font-family: var(--font-heading);
+}
+
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar,
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes bounceGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 4s ease-in-out infinite;
+}
+

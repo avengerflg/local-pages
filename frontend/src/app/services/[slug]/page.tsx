@@ -5,6 +5,8 @@ import { useService } from '@/hooks/use-service';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
+
+
 export default function ServiceDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
