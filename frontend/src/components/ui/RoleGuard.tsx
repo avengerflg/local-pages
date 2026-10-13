@@ -11,6 +11,16 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
+        if (typeof window !== 'undefined') {
+          const current = window.location.pathname + window.location.search;
+          if (current && current !== '/login' && !current.startsWith('/login')) {
+            try {
+              sessionStorage.setItem('intended_url', current);
+            } catch {
+              // ignore storage errors
+            }
+          }
+        }
         router.push('/login');
       } else if (!allowedRoles.includes(user.role)) {
         router.push('/unauthorized');

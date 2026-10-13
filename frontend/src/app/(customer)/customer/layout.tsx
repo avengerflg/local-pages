@@ -300,7 +300,7 @@ export default function CustomerDashboardLayout({ children }: { children: React.
 
             {/* Primary Post Job CTA in Top Bar */}
             <Link
-              href="/services"
+              href="/customer/requests/new"
               className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-[#E01E5A] hover:from-[#E01E5A] hover:to-brand-pink text-white font-heading font-extrabold text-xs tracking-wide transition-all shadow-[0_4px_12px_rgba(245,43,104,0.22)]"
             >
               <PlusCircle className="w-3.5 h-3.5" />

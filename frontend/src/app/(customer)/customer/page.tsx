@@ -64,7 +64,7 @@ export default function CustomerDashboardPage() {
             {/* Quick Action CTAs */}
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <Link
-                href="/services"
+                href="/customer/requests/new"
                 className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-[#E01E5A] hover:from-[#E01E5A] hover:to-brand-pink text-white font-heading font-extrabold text-xs sm:text-sm tracking-wide transition-all shadow-[0_8px_20px_rgba(245,43,104,0.25)] hover:shadow-[0_12px_25px_rgba(245,43,104,0.35)] cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />

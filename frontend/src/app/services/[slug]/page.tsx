@@ -36,11 +36,13 @@ export default function ServiceDetailPage() {
                       </div>
                       <div className="text-sm text-gray-500 mt-1 capitalize">Type: {q.question_type}</div>
                       {q.conditional_rule && (
-                        <div className="text-sm text-yellow-600 mt-1">Note: Shows only if ({q.conditional_rule})</div>
+                        <div className="text-sm text-amber-700 mt-1">
+                          Note: Shows conditionally ({typeof q.conditional_rule === 'string' ? q.conditional_rule : JSON.stringify(q.conditional_rule)})
+                        </div>
                       )}
                       {q.options && q.options.length > 0 && (
                         <div className="mt-2 text-sm text-gray-600">
-                          Options: {q.options.map(o => o.option_text).join(', ')}
+                          Options: {q.options.map(o => o.label || o.option_text || o.value).join(', ')}
                         </div>
                       )}
                     </li>
@@ -50,8 +52,11 @@ export default function ServiceDetailPage() {
             )}
             
             <div className="mt-8 pt-8 border-t text-center">
-              <Link href="/register" className="inline-flex justify-center rounded-md bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
-                Log in to request this service
+              <Link 
+                href={`/customer/requests/new?service=${service.slug}`} 
+                className="inline-flex justify-center items-center gap-2 rounded-xl bg-gradient-to-r from-brand-pink to-[#E01E5A] px-6 py-3.5 text-sm font-extrabold text-white shadow-md hover:shadow-lg transition-all"
+              >
+                <span>Request This Service & Get Free Quotes</span>
               </Link>
             </div>
           </div>

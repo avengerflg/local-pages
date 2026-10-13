@@ -26,7 +26,7 @@ export default function CustomerJobsPage() {
         </div>
 
         <Link
-          href="/services"
+          href="/customer/requests/new"
           className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-[#E01E5A] hover:from-[#E01E5A] hover:to-brand-pink text-white font-heading font-extrabold text-xs sm:text-sm tracking-wide transition-all shadow-[0_6px_18px_rgba(245,43,104,0.25)] shrink-0"
         >
           <PlusCircle className="w-4 h-4" />
@@ -101,7 +101,7 @@ export default function CustomerJobsPage() {
             Need emergency plumbing, roof repair, electrical wiring, or renovations? Post a job to receive direct quotes from licensed tradies.
           </p>
           <Link
-            href="/services"
+            href="/customer/requests/new"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-[#E01E5A] text-white font-heading font-extrabold text-xs sm:text-sm tracking-wide shadow-md"
           >
             <PlusCircle className="w-4 h-4" />

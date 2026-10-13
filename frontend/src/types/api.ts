@@ -29,22 +29,101 @@ export interface TradieProfile {
   verification_status: 'pending' | 'verified' | 'rejected';
 }
 
+export interface ConditionalRule {
+  depends_on_question_id?: number;
+  parent_question_id?: number;
+  selected_option_id?: number;
+  parent_option_id?: number;
+  value?: string;
+}
+
 export interface ServiceQuestionOption {
   id: number;
   question_id: number;
-  option_text: string;
+  label?: string;
+  value?: string;
+  option_text?: string;
   sort_order: number;
 }
+
+export type QuestionType =
+  | 'single_choice'
+  | 'multiple_choice'
+  | 'text'
+  | 'file_upload'
+  | 'image_upload'
+  | 'textarea'
+  | 'radio'
+  | 'checkbox'
+  | 'select'
+  | string;
 
 export interface ServiceQuestion {
   id: number;
   service_id: number;
   question_text: string;
-  question_type: 'text' | 'textarea' | 'radio' | 'checkbox' | 'select';
+  question_type: QuestionType;
   required: boolean;
   sort_order: number;
-  conditional_rule: string | null;
+  conditional_rule: ConditionalRule | string | null;
   options?: ServiceQuestionOption[];
+}
+
+export interface ServiceRequestAnswerPayload {
+  question_id: number;
+  selected_option_id?: number | null;
+  answer_text?: string | null;
+  structured_value?: (string | number)[] | null;
+}
+
+export interface CreateServiceRequestPayload {
+  service_id: number;
+  location_id?: number | null;
+  postcode: string;
+  title?: string | null;
+  description?: string | null;
+  answers?: ServiceRequestAnswerPayload[];
+  attachments?: File[];
+}
+
+export interface ServiceRequestAttachment {
+  id: number;
+  request_id: number;
+  original_name: string;
+  mime_type: string;
+  file_size: number;
+  download_url?: string;
+  created_at?: string;
+}
+
+export interface RequestAnswer {
+  id: number;
+  request_id: number;
+  question_id: number;
+  question_text?: string;
+  question_type?: string;
+  answer_text?: string | null;
+  selected_option_id?: number | null;
+  selected_option?: ServiceQuestionOption | null;
+  structured_value?: (string | number)[] | null;
+}
+
+export interface ServiceRequest {
+  id: number;
+  customer_id: number;
+  service_id: number;
+  service?: Service | null;
+  location_id: number | null;
+  location?: Location | null;
+  postcode: string;
+  title: string | null;
+  description: string | null;
+  status: 'draft' | 'submitted' | 'quote_accepted' | 'completed' | 'cancelled' | string;
+  submitted_at: string | null;
+  answers?: RequestAnswer[];
+  attachments?: ServiceRequestAttachment[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Service {

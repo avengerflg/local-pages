@@ -57,7 +57,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('auth_token', token);
     setUser(user);
     if (user.role === 'customer') {
-      router.push('/customer');
+      let intendedUrl: string | null = null;
+      if (typeof window !== 'undefined') {
+        try {
+          intendedUrl = sessionStorage.getItem('intended_url');
+          if (intendedUrl) {
+            sessionStorage.removeItem('intended_url');
+          }
+        } catch {
+          // ignore storage errors
+        }
+      }
+      if (intendedUrl && intendedUrl.startsWith('/') && !intendedUrl.startsWith('/login')) {
+        router.push(intendedUrl);
+      } else {
+        router.push('/customer');
+      }
     }
   }, [router]);
 

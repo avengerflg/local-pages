@@ -4,7 +4,7 @@
 Local Pages / Tradies Services Marketplace
 
 ## Current phase
-**Phase F-Stab — Frontend Stabilization & Regression Repair (COMPLETE)**
+**Phase F5 — Customer Service Request Creation & Intake Wizard (COMPLETE)**
 
 ## Overall status
 
@@ -41,7 +41,7 @@ Local Pages / Tradies Services Marketplace
 | F3. Public discovery pages | COMPLETE | Services directory, location search, about, contact |
 | F4. Homepage visual redesign | COMPLETE | Emergency trade cards, top trades, business CTA |
 | F-Stab. Frontend stabilization | COMPLETE | ESLint 0 errors/0 warnings, 5/5 Jest suites green, API contracts aligned, /unauthorized page, production build verified |
-| F5. Customer service request intake | NOT STARTED | Intake questionnaire & submission |
+| F5. Customer service request intake | COMPLETE | 5-step wizard, dynamic question engine, conditional visibility, location picker, file attachments, 422 mapping, 9/9 Jest suites green |
 | F6. Tradie matching UI | NOT STARTED | Match results & tradie selection |
 | F7. Quote comparison UI | NOT STARTED | Quote review, acceptance & rejection |
 | F8. Appointment booking UI | NOT STARTED | Scheduling tradie appointments |
