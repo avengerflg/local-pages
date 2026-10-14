@@ -56,23 +56,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginAction = useCallback((token: string, user: User) => {
     localStorage.setItem('auth_token', token);
     setUser(user);
-    if (user.role === 'customer') {
-      let intendedUrl: string | null = null;
-      if (typeof window !== 'undefined') {
-        try {
-          intendedUrl = sessionStorage.getItem('intended_url');
-          if (intendedUrl) {
-            sessionStorage.removeItem('intended_url');
-          }
-        } catch {
-          // ignore storage errors
+    let intendedUrl: string | null = null;
+    if (typeof window !== 'undefined') {
+      try {
+        intendedUrl = sessionStorage.getItem('intended_url');
+        if (intendedUrl) {
+          sessionStorage.removeItem('intended_url');
         }
+      } catch {
+        // ignore storage errors
       }
-      if (intendedUrl && intendedUrl.startsWith('/') && !intendedUrl.startsWith('/login')) {
-        router.push(intendedUrl);
-      } else {
-        router.push('/customer');
-      }
+    }
+    if (intendedUrl && intendedUrl.startsWith('/') && !intendedUrl.startsWith('/login')) {
+      router.push(intendedUrl);
+    } else if (user.role === 'admin') {
+      router.push('/admin');
+    } else if (user.role === 'customer') {
+      router.push('/customer');
+    } else {
+      router.push('/');
     }
   }, [router]);
 
