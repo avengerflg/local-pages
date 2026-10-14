@@ -71,11 +71,11 @@ export const PublicHeader = () => {
         <div className="hidden lg:flex lg:items-center lg:gap-5">
           {user ? (
             <Link 
-              href="/customer" 
+              href={user.role === 'admin' ? '/admin' : '/customer'} 
               className="inline-flex items-center gap-2 text-[14px] font-bold text-brand-navy hover:text-brand-pink transition-colors px-4 py-2 rounded-xl bg-gray-50 border border-gray-200/80"
             >
               <User className="w-4 h-4 text-brand-pink" />
-              <span>Dashboard ({user.name?.split(' ')[0] || 'Account'})</span>
+              <span>{user.role === 'admin' ? 'Admin Portal' : `Dashboard (${user.name?.split(' ')[0] || 'Account'})`}</span>
             </Link>
           ) : (
             <Link 
@@ -161,12 +161,12 @@ export const PublicHeader = () => {
           <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
             {user ? (
               <Link 
-                href="/customer" 
+                href={user.role === 'admin' ? '/admin' : '/customer'} 
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 font-bold text-brand-navy"
               >
                 <User className="w-4 h-4 text-brand-pink" />
-                <span>My Customer Dashboard</span>
+                <span>{user.role === 'admin' ? 'Admin Portal' : 'My Customer Dashboard'}</span>
               </Link>
             ) : (
               <Link 

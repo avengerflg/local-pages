@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Mail, 
   Lock, 
@@ -19,7 +20,8 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 import { UtilityBar } from '@/components/layout/UtilityBar';
 
 export default function LoginPage() {
-  const { login: setAuth } = useAuth();
+  const { login: setAuth, user, isLoading } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +29,25 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      let intendedUrl: string | null = null;
+      try {
+        intendedUrl = sessionStorage.getItem('intended_url');
+        if (intendedUrl) sessionStorage.removeItem('intended_url');
+      } catch {
+        // ignore storage errors
+      }
+      if (intendedUrl && intendedUrl.startsWith('/') && !intendedUrl.startsWith('/login')) {
+        router.push(intendedUrl);
+      } else if (user.role === 'admin') {
+        router.push('/admin');
+      } else if (user.role === 'customer') {
+        router.push('/customer');
+      }
+    }
+  }, [user, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +58,22 @@ export default function LoginPage() {
     try {
       const data = await login({ email, password, device_name: 'web' });
       setAuth(data.token, data.user);
+      let intendedUrl: string | null = null;
+      try {
+        intendedUrl = sessionStorage.getItem('intended_url');
+        if (intendedUrl) sessionStorage.removeItem('intended_url');
+      } catch {
+        // ignore storage errors
+      }
+      if (intendedUrl && intendedUrl.startsWith('/') && !intendedUrl.startsWith('/login')) {
+        router.push(intendedUrl);
+      } else if (data.user.role === 'admin') {
+        router.push('/admin');
+      } else if (data.user.role === 'customer') {
+        router.push('/customer');
+      } else {
+        router.push('/');
+      }
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (err: any) {
       console.error('Login Error:', err);
